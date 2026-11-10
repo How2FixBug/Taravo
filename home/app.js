@@ -1,9 +1,8 @@
 const GAMES = [
   { id: "brick-breaker", title: "Brick Breaker", description: "Bounce, break, and clear the board.", path: "games/brick-breaker/", tags: ["arcade", "skill", "action", "quick-play"] },
   { id: "stackrush", title: "Stack Rush", description: "Line up the blocks. Keep the tower going.", path: "games/stackrush/", tags: ["arcade", "skill", "timing", "quick-play"] },
-  { id: "shop-sim", title: "Shop Sim", description: "Run the floor. Stock shelves. Build your corner store.", path: "games/shop-sim/", tags: ["simulation", "management", "strategy", "progression"] }
 ];
-const FEATURED_GAME_ID = "shop-sim";
+const FEATURED_GAME_ID = null;
 const FAVORITES_KEY = "taravo-favorites";
 const appScript = document.querySelector('script[src$="app.js"]');
 const TARAVO_ROOT = new URL("../", appScript.src);
