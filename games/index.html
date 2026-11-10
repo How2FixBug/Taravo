@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#08090b">
   <title>Games — taravo</title>
   <link rel="stylesheet" href="../home/style.css">
-  <link rel="stylesheet" href="stackrush/game.css">
+  <link rel="stylesheet" href="brick-breaker/game.css">
 </head>
 <body data-page="games" class="game-page">
   <aside class="sidebar">
@@ -20,20 +20,22 @@
   </aside>
   <main class="main-content">
     <header class="page-header game-page-header"><div><h1>Games</h1></div></header>
-    <section class="stackrush-shell" aria-label="Stack Rush game">
-      <div class="stackrush-top">
-        <div class="stackrush-score"><span>SCORE</span><strong id="score">0</strong></div>
-        <div class="stackrush-best"><span>BEST</span><strong id="best">0</strong></div>
+    <section class="arcade-shell" aria-label="Brick Breaker game">
+      <div class="arcade-hud">
+        <div><span>SCORE</span><strong id="score">0</strong></div>
+        <div><span>LEVEL</span><strong id="level">1</strong></div>
+        <div><span>BEST</span><strong id="best">0</strong></div>
       </div>
-      <canvas id="stackrush" width="1100" height="720" aria-label="Stack Rush game"></canvas>
-      <div class="stackrush-overlay" id="overlay">
-        <div class="stackrush-start">
-          <h2 id="overlay-title">Stack Rush</h2>
+      <canvas id="brick-breaker" width="1100" height="720" aria-label="Brick Breaker game"></canvas>
+      <div class="arcade-overlay" id="overlay">
+        <div class="arcade-start">
+          <h2 id="overlay-title">Brick Breaker</h2>
+          <p id="overlay-copy">Move to control the paddle.</p>
           <button id="start-button" type="button">Play</button>
         </div>
       </div>
     </section>
   </main>
-  <script src="stackrush/game.js"></script>
+  <script src="brick-breaker/game.js"></script>
 </body>
 </html>
