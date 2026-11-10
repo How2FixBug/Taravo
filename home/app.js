@@ -1,8 +1,9 @@
 const GAMES = [
-  { id: "brick-breaker", title: "Brick Breaker", description: "Bounce, break, and clear the board.", path: "games/brick-breaker/" },
-  { id: "stackrush", title: "Stack Rush", description: "Line up the blocks. Keep the tower going.", path: "games/stackrush/" },
-  { id: "shop-sim", title: "Shop Sim", description: "Run the floor. Stock shelves. Build your corner store.", path: "games/shop-sim/" }
+  { id: "brick-breaker", title: "Brick Breaker", description: "Bounce, break, and clear the board.", path: "games/brick-breaker/", tags: ["arcade", "skill", "action", "quick-play"] },
+  { id: "stackrush", title: "Stack Rush", description: "Line up the blocks. Keep the tower going.", path: "games/stackrush/", tags: ["arcade", "skill", "timing", "quick-play"] },
+  { id: "shop-sim", title: "Shop Sim", description: "Run the floor. Stock shelves. Build your corner store.", path: "games/shop-sim/", tags: ["simulation", "management", "strategy", "progression"] }
 ];
+const FEATURED_GAME_ID = "shop-sim";
 const FAVORITES_KEY = "taravo-favorites";
 const appScript = document.querySelector('script[src$="app.js"]');
 const TARAVO_ROOT = new URL("../", appScript.src);
@@ -13,19 +14,33 @@ function getFavorites() {
 }
 function saveFavorites(ids) { localStorage.setItem(FAVORITES_KEY, JSON.stringify(ids)); }
 
-function createGameCard(game, favorites) {
+function createGameCard(game, favorites, featured = false) {
   const card = document.createElement("article");
-  card.className = "game-card";
+  card.className = featured ? "game-card featured-game-card" : "game-card";
   card.dataset.game = game.id;
   const art = document.createElement("div");
   art.className = "game-art";
   art.setAttribute("aria-hidden", "true");
   const details = document.createElement("div");
   details.className = "game-details";
+  if (featured) {
+    const eyebrow = document.createElement("span");
+    eyebrow.className = "featured-eyebrow";
+    eyebrow.textContent = "FEATURED GAME";
+    details.append(eyebrow);
+  }
   const title = document.createElement("h3");
   title.textContent = game.title;
   const description = document.createElement("p");
   description.textContent = game.description;
+  const tags = document.createElement("div");
+  tags.className = "game-tags";
+  game.tags.forEach(tag => {
+    const chip = document.createElement("span");
+    chip.className = "game-tag";
+    chip.textContent = tag;
+    tags.append(chip);
+  });
   const actions = document.createElement("div");
   actions.className = "game-actions";
   const open = document.createElement("a");
@@ -44,19 +59,64 @@ function createGameCard(game, favorites) {
     if (index === -1) next.push(game.id);
     else next.splice(index, 1);
     saveFavorites(next);
-    renderGames(document.querySelector(".game-search")?.value || "");
+    renderPage(document.querySelector(".game-search")?.value || "");
   });
   actions.append(open, favorite);
-  details.append(title, description, actions);
+  details.append(title, description, tags, actions);
   card.append(art, details);
   return card;
 }
+
+function getRecommendedGames(favorites) {
+  const candidates = GAMES.filter(game => game.id !== FEATURED_GAME_ID);
+  const favoriteTags = new Set(GAMES.filter(game => favorites.includes(game.id)).flatMap(game => game.tags));
+  if (!favoriteTags.size) return candidates;
+  return candidates
+    .map(game => ({ game, score: game.tags.reduce((total, tag) => total + (favoriteTags.has(tag) ? 1 : 0), 0) }))
+    .sort((a, b) => b.score - a.score || GAMES.indexOf(a.game) - GAMES.indexOf(b.game))
+    .map(item => item.game);
+}
+
+function renderHome(search, favorites) {
+  const featuredSlot = document.getElementById("featured-game");
+  const recommendedGrid = document.getElementById("recommended-grid");
+  if (!featuredSlot || !recommendedGrid) return;
+  const query = search.trim().toLowerCase();
+  const featured = GAMES.find(game => game.id === FEATURED_GAME_ID);
+  featuredSlot.replaceChildren();
+  recommendedGrid.replaceChildren();
+  if (featured && (!query || [featured.title, featured.description, ...featured.tags].join(" ").toLowerCase().includes(query))) {
+    featuredSlot.append(createGameCard(featured, favorites, true));
+  }
+  const recommended = getRecommendedGames(favorites).filter(game =>
+    !query || [game.title, game.description, ...game.tags].join(" ").toLowerCase().includes(query)
+  );
+  if (recommended.length) {
+    recommended.forEach(game => recommendedGrid.append(createGameCard(game, favorites)));
+  } else {
+    const empty = document.createElement("p");
+    empty.className = "subtle-empty";
+    empty.textContent = "No recommended games match that search.";
+    recommendedGrid.append(empty);
+  }
+  if (!featuredSlot.childElementCount && !recommended.length) {
+    const empty = document.createElement("p");
+    empty.className = "subtle-empty";
+    empty.textContent = "No games match that search.";
+    featuredSlot.append(empty);
+  }
+}
+
 function renderGames(search = "") {
   const page = document.body.dataset.page;
   const favorites = getFavorites();
+  if (page === "home") {
+    renderHome(search, favorites);
+    return;
+  }
   let games = page === "favorites" ? GAMES.filter(game => favorites.includes(game.id)) : GAMES;
   const query = search.trim().toLowerCase();
-  if (query) games = games.filter(game => game.title.toLowerCase().includes(query) || game.description.toLowerCase().includes(query));
+  if (query) games = games.filter(game => [game.title, game.description, ...game.tags].join(" ").toLowerCase().includes(query));
   const grid = document.getElementById("game-grid");
   if (!grid) return;
   grid.replaceChildren();
@@ -73,7 +133,9 @@ function renderGames(search = "") {
   empty.append(heading, message);
   grid.append(empty);
 }
+function renderPage(search = "") { renderGames(search); }
+
 document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll(".game-search").forEach(input => input.addEventListener("input", () => renderGames(input.value)));
-  renderGames();
+  document.querySelectorAll(".game-search").forEach(input => input.addEventListener("input", () => renderPage(input.value)));
+  renderPage();
 });
