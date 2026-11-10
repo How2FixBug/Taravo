@@ -1,191 +1,53 @@
-(() => {
-  "use strict";
-  const $ = id => document.getElementById(id);
-  const canvas = $("store-canvas"), ctx = canvas.getContext("2d");
-  const SAVE_KEY = "taravo-shop-sim-save-v1";
-  const products = [
-    {id:"apples",name:"Apples",icon:"🍎",base:2,cost:0.75,price:2,stock:18,capacity:30,color:"#e75c50",unlock:1},
-    {id:"bread",name:"Bread",icon:"🍞",base:3,cost:1.15,price:3,stock:15,capacity:25,color:"#d9a75b",unlock:1},
-    {id:"milk",name:"Milk",icon:"🥛",base:3.5,cost:1.4,price:3.5,stock:14,capacity:24,color:"#75b8dc",unlock:1},
-    {id:"coffee",name:"Coffee",icon:"☕",base:5,cost:2.1,price:5,stock:10,capacity:20,color:"#9b7458",unlock:2},
-    {id:"flowers",name:"Flowers",icon:"💐",base:7,cost:3,price:7,stock:8,capacity:16,color:"#d88cc0",unlock:3},
-    {id:"snacks",name:"Snack boxes",icon:"🍪",base:4.5,cost:1.7,price:4.5,stock:0,capacity:22,color:"#e5a34e",unlock:4},
-    {id:"plants",name:"House plants",icon:"🪴",base:12,cost:5,price:12,stock:0,capacity:12,color:"#64a878",unlock:5}
-  ];
-  const upgradeDefs = [
-    {id:"shelves",name:"Bigger shelves",desc:"More room for every product. +8 capacity each.",cost:180,max:3},
-    {id:"sign",name:"Bright shop sign",desc:"Attract more shoppers to your store.",cost:240,max:3},
-    {id:"staff",name:"Hire an employee",desc:"Staff keep shelves topped up and improve service.",cost:320,max:3},
-    {id:"expansion",name:"Expand the store",desc:"Unlock another shelf and welcome more customers.",cost:500,max:3}
-  ];
-  const freshState = () => ({cash:350,day:1,level:1,xp:0,reputation:50,totalCustomers:0,totalRevenue:0,upgrades:{shelves:0,sign:0,staff:0,expansion:0},stocks:Object.fromEntries(products.map(p=>[p.id,p.stock])),prices:Object.fromEntries(products.map(p=>[p.id,p.price])),dayRevenue:0,dayCustomers:0,dayLost:0,elapsed:0,open:true,paused:false,customers:[],nextCustomer:2.5,lastReport:null});
-  let state = freshState();
-  try {
-    const saved = JSON.parse(localStorage.getItem(SAVE_KEY) || "null");
-    if (saved && saved.version === 1) state = {...state,...saved.state,upgrades:{...state.upgrades,...saved.state.upgrades},stocks:{...state.stocks,...saved.state.stocks},prices:{...state.prices,...saved.state.prices},customers:[]};
-  } catch {}
-  let lastFrame = performance.now(), animation = 0, feed = [], lastStatsSecond = -1, saveTimer = 0, staffTimer = 14;
-  const rand = (a,b) => a + Math.random()*(b-a);
-  const money = n => "$" + Math.max(0,n).toFixed(2).replace(/\.00$/,"");
-  const unlocked = p => p.unlock <= state.level;
-  const shelfCapacity = p => p.capacity + state.upgrades.shelves*8;
-  function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({version:1,state:{...state,customers:[]}}))}catch{}}
-  function log(message){feed.unshift(message);feed=feed.slice(0,3);$("activity-feed").innerHTML="";feed.forEach(line=>{const p=document.createElement("p");p.textContent=line;$("activity-feed").append(p)})}
-  function levelForXP(xp){return 1+Math.floor(xp/90)}
-  function addXP(amount){const old=state.level;state.xp+=amount;state.level=levelForXP(state.xp);if(state.level>old){log("Level "+state.level+" reached! New products unlocked.");renderProducts();renderUpgrades()}}
-  function availableProducts(){return products.filter(unlocked)}
-  function renderProducts(){
-    const list=$("product-list");list.replaceChildren();
-    availableProducts().forEach(p=>{
-      const stock=state.stocks[p.id]||0,price=state.prices[p.id]||p.base;
-      const row=document.createElement("div");row.className="product-row";
-      const icon=document.createElement("div");icon.className="product-icon";icon.textContent=p.icon;
-      const info=document.createElement("div");info.className="product-info";
-      const name=document.createElement("strong");name.textContent=p.name;
-      const detail=document.createElement("span");detail.textContent="Cost "+money(p.cost)+" · "+money(price)+" each";
-      info.append(name,detail);
-      const controls=document.createElement("div");controls.className="product-controls";
-      const count=document.createElement("span");count.className="stock-count";count.textContent=stock+" / "+shelfCapacity(p);
-      const prices=document.createElement("div");prices.className="price-controls";
-      const down=document.createElement("button");down.type="button";down.textContent="−";down.setAttribute("aria-label","Lower "+p.name+" price");down.disabled=price<=p.base*.6;
-      const priceText=document.createElement("b");priceText.textContent=money(price);
-      const up=document.createElement("button");up.type="button";up.textContent="+";up.setAttribute("aria-label","Raise "+p.name+" price");up.disabled=price>=p.base*2;
-      down.addEventListener("click",()=>changePrice(p.id,-.25));up.addEventListener("click",()=>changePrice(p.id,.25));
-      prices.append(down,priceText,up);controls.append(count,prices);row.append(icon,info,controls);list.append(row);
-    });
-    $("shelf-count").textContent=(4+state.upgrades.expansion)+" shelves";
-  }
-  function changePrice(id,delta){state.prices[id]=Math.round((state.prices[id]+delta)*100)/100;renderProducts();save()}
-  function restock(id,quantity=12){
-    const p=products.find(x=>x.id===id),current=state.stocks[id]||0,amount=Math.min(quantity,shelfCapacity(p)-current);
-    if(amount<=0){log(p.name+" shelf is already full.");return}
-    const cost=amount*p.cost;if(state.cash<cost){log("Not enough cash to order "+p.name+".");return}
-    state.cash-=cost;state.stocks[id]=current+amount;log("Restocked "+amount+" "+p.name.toLowerCase()+".");renderStats();renderProducts();renderUpgrades();save();
-  }
-  function renderUpgrades(){
-    const root=$("upgrade-list");root.replaceChildren();
-    upgradeDefs.forEach(def=>{
-      const level=state.upgrades[def.id],cost=Math.round(def.cost*Math.pow(1.65,level)),maxed=level>=def.max;
-      const card=document.createElement("div");card.className="upgrade-card";
-      const top=document.createElement("div");top.className="upgrade-card-top";
-      const title=document.createElement("strong");title.textContent=def.name+" · "+level+"/"+def.max;
-      const price=document.createElement("strong");price.textContent=maxed?"MAX":money(cost);top.append(title,price);
-      const desc=document.createElement("p");desc.textContent=def.desc;
-      const button=document.createElement("button");button.type="button";button.textContent=maxed?"Fully upgraded":"Purchase upgrade";button.disabled=maxed||state.cash<cost;
-      button.addEventListener("click",()=>buyUpgrade(def.id,cost));card.append(top,desc,button);root.append(card);
-    });
-    $("rent-value").textContent=money(35+state.upgrades.expansion*22);$("wages-value").textContent=money(state.upgrades.staff*24);
-  }
-  function buyUpgrade(id,cost){
-    if(state.cash<cost||state.upgrades[id]>=upgradeDefs.find(x=>x.id===id).max)return;
-    state.cash-=cost;state.upgrades[id]++;
-    if(id==="expansion"){const next=availableProducts();const nextLocked=products.find(p=>!unlocked(p));if(nextLocked){state.level=Math.max(state.level,nextLocked.unlock);state.xp=Math.max(state.xp,(state.level-1)*90);log("New department unlocked: "+nextLocked.name+".")}}
-    log(upgradeDefs.find(x=>x.id===id).name+" upgraded.");renderAll();save();
-  }
-  function renderStats(){
-    $("cash-value").textContent=money(state.cash);$("today-value").textContent=money(state.dayRevenue);$("customer-value").textContent=state.dayCustomers;$("reputation-value").textContent=Math.round(state.reputation);
-    $("day-number").textContent=state.day;$("store-level").textContent="Level "+state.level+" · "+(["New business","Local favorite","Neighborhood staple","Busy destination","Market leader"][Math.min(4,Math.floor((state.level-1)/2))]);
-    $("clock-value").textContent=clockText(state.elapsed);$("day-progress").style.width=Math.min(100,state.elapsed/120*100)+"%";
-    $("open-status").innerHTML=state.open?"<i></i> OPEN":"<i></i> CLOSED";
-    $("visitor-message").textContent=state.customers.length?state.customers.length+" shoppers in store":"Waiting for shoppers";
-    $("pause-button").textContent=state.paused?"▶":"Ⅱ";$("pause-button").setAttribute("aria-label",state.paused?"Resume simulation":"Pause simulation");
-  }
-  function clockText(t){const minutes=Math.min(8*60+Math.floor(t/120*10*60),18*60);const h=Math.floor(minutes/60),m=minutes%60;return (h%12||12)+":"+String(m).padStart(2,"0")+" "+(h>=12?"PM":"AM")}
-  function renderAll(){renderStats();renderProducts();renderUpgrades()}
-  function spawnCustomer(){
-    const available=availableProducts().filter(p=>(state.stocks[p.id]||0)>0);
-    if(!available.length){state.dayLost++;state.reputation=Math.max(0,state.reputation-.04);return}
-    const wants=available.filter(()=>Math.random()<.48);const chosen=(wants.length?wants: [available[Math.floor(Math.random()*available.length)]]).slice(0,2);
-    const expensive=chosen.some(p=>state.prices[p.id]>p.base*1.35);
-    const mood=expensive?"hesitant":"happy";
-    const x=rand(115,840),y=rand(125,390);
-    const customer={x:-25,y:rand(155,390),tx:x,ty:y,phase:"browse",wait:rand(5,10),cart:[],color:["#5b91d5","#e58b69","#8c78c9","#55a98c","#d6a64f"][Math.floor(Math.random()*5)],speed:rand(48,72),mood,spent:0};
-    chosen.forEach(p=>customer.cart.push({id:p.id,qty:Math.random()<.25?2:1}));state.customers.push(customer);
-  }
-  function finishShopping(c){
-    let bought=0,subtotal=0;
-    c.cart.forEach(item=>{const p=products.find(x=>x.id===item.id),ratio=state.prices[p.id]/p.base,willingness=ratio<=1.08?1:ratio<=1.25?.85:ratio<=1.5?.58:.32,qty=Math.random()<willingness?Math.min(item.qty,state.stocks[p.id]||0):0;if(qty>0){state.stocks[p.id]-=qty;subtotal+=qty*state.prices[p.id];bought+=qty}});
-    if(bought){const serviceBonus=state.upgrades.staff*.04;const total=subtotal*(1+serviceBonus);state.cash+=total;state.dayRevenue+=total;state.totalRevenue+=total;state.dayCustomers++;state.totalCustomers++;state.reputation=Math.min(100,state.reputation+.12);addXP(Math.max(2,bought*2));c.spent=total;log("Sale: "+money(total)+" · "+bought+" item"+(bought===1?"":"s")+".")}
-    else{state.dayLost++;state.reputation=Math.max(0,state.reputation-.25);log("A shopper left empty-handed.")}
-    c.phase="exit";c.tx=990;c.ty=c.y;
-  }
-  function updateCustomers(dt){
-    for(let i=state.customers.length-1;i>=0;i--){
-      const c=state.customers[i];
-      if(c.phase==="browse"){c.wait-=dt;if(c.wait<=0){c.phase="checkout";c.tx=765;c.ty=470}}
-      const dx=c.tx-c.x,dy=c.ty-c.y,dist=Math.hypot(dx,dy);
-      if(dist>3){const step=Math.min(dist,c.speed*dt);c.x+=dx/dist*step;c.y+=dy/dist*step}
-      else if(c.phase==="checkout")finishShopping(c);
-      else if(c.phase==="exit"){state.customers.splice(i,1)}
-    }
-  }
-  function drawStore(){
-    const w=960,h=560;ctx.clearRect(0,0,w,h);ctx.fillStyle="#f2f1eb";ctx.fillRect(0,0,w,h);
-    ctx.fillStyle="#e7e6de";ctx.fillRect(24,24,912,512);
-    ctx.strokeStyle="#d4d4ca";ctx.lineWidth=2;ctx.strokeRect(24,24,912,512);
-    ctx.fillStyle="#e3e0d4";ctx.fillRect(40,40,880,44);
-    ctx.fillStyle="#6d7b70";ctx.font="700 14px system-ui";ctx.fillText("FRESH • LOCAL • DAILY",58,67);
-    ctx.fillStyle="#b6c4b9";ctx.fillRect(750,40,150,44);ctx.fillStyle="#496151";ctx.font="800 12px system-ui";ctx.fillText("ENTRANCE  ↓",780,67);
-    const shelfSlots=4+state.upgrades.expansion;
-    for(let i=0;i<shelfSlots;i++){
-      const x=80+(i%4)*202,y=140+Math.floor(i/4)*165;
-      const p=availableProducts()[i%availableProducts().length];
-      ctx.fillStyle="#c18a4f";ctx.fillRect(x,y,155,78);ctx.fillStyle="#e7bd7d";ctx.fillRect(x+5,y+5,145,13);
-      ctx.fillStyle="#946b42";ctx.fillRect(x+7,y+24,141,48);
-      const stock=state.stocks[p.id]||0,cap=shelfCapacity(p);
-      for(let n=0;n<Math.min(10,Math.ceil(stock/cap*10));n++){ctx.fillStyle=p.color;ctx.fillRect(x+12+n*13,y+32,10,31)}
-      ctx.fillStyle="#fff";ctx.font="700 10px system-ui";ctx.fillText(p.name.toUpperCase(),x+9,y+68);
-      ctx.fillStyle="#8c7252";ctx.fillRect(x+10,y+78,9,10);ctx.fillRect(x+136,y+78,9,10);
-    }
-    ctx.fillStyle="#7b9c86";ctx.fillRect(710,438,176,58);ctx.fillStyle="#eaf2eb";ctx.font="800 12px system-ui";ctx.fillText("CHECKOUT",750,472);
-    ctx.fillStyle="#d6e4d9";ctx.fillRect(720,448,155,8);
-    state.customers.forEach(c=>{
-      ctx.save();ctx.translate(c.x,c.y);
-      ctx.fillStyle="#00000018";ctx.beginPath();ctx.ellipse(0,13,12,5,0,0,Math.PI*2);ctx.fill();
-      ctx.fillStyle=c.color;ctx.beginPath();ctx.arc(0,0,11,0,Math.PI*2);ctx.fill();
-      ctx.fillStyle="#f3d1b1";ctx.beginPath();ctx.arc(0,-12,7,0,Math.PI*2);ctx.fill();
-      ctx.fillStyle="#46564d";ctx.fillRect(10,5,10,7);ctx.strokeStyle="#46564d";ctx.strokeRect(10,5,10,7);
-      ctx.restore();
-    });
-    ctx.fillStyle="#8a958b";ctx.font="10px system-ui";ctx.fillText("AISLE 01",52,123);ctx.fillText("AISLE 02",52,290);
-  }
-  function endDay(){
-    if(!state.open)return;
-    state.open=false;state.paused=true;state.customers.forEach(c=>{if(c.phase!=="exit")state.dayLost++});state.customers=[];
-    const rent=35+state.upgrades.expansion*22,wages=state.upgrades.staff*24,expenses=rent+wages,profit=state.dayRevenue-expenses;
-    state.cash-=expenses;state.reputation=Math.max(0,Math.min(100,state.reputation+(profit>0?1.2:-1.8)));
-    addXP(Math.max(8,Math.floor(Math.max(0,profit)/12)));
-    $("report-title").textContent="Day "+state.day+" complete";
-    $("report-content").innerHTML='<div class="report-grid"><span>Sales</span><strong>'+money(state.dayRevenue)+'</strong><span>Rent & wages</span><strong>−'+money(expenses)+'</strong><span>Net profit</span><strong>'+money(profit)+'</strong><span>Customers served</span><strong>'+state.dayCustomers+'</strong><span>Missed shoppers</span><strong>'+state.dayLost+'</strong><span>Reputation</span><strong>'+Math.round(state.reputation)+'/100</strong></div><p class="report-note">'+(profit>=0?"A profitable day. Keep the shelves stocked and grow your neighborhood reputation.":"A rough day. Try adjusting prices and keeping popular items available.")+'</p>';
-    $("day-report").classList.remove("hidden");$("open-status").innerHTML="<i></i> CLOSED";renderStats();save();
-  }
-  function nextDay(){
-    state.day++;state.dayRevenue=0;state.dayCustomers=0;state.dayLost=0;state.elapsed=0;state.open=true;state.paused=false;state.customers=[];state.nextCustomer=2;lastStatsSecond=-1;
-    $("day-report").classList.add("hidden");log("Day "+state.day+" is open. Let's make it count.");renderStats();save();
-  }
-  function frame(now){
-    const dt=Math.min(.05,(now-lastFrame)/1000||0);lastFrame=now;
-    if(state.open&&!state.paused){
-      state.elapsed+=dt;
-      if(state.elapsed>=120){endDay()}
-      else{state.nextCustomer-=dt;if(state.nextCustomer<=0){if(state.customers.length<5+state.upgrades.sign*2)spawnCustomer();state.nextCustomer=rand(3.8,6.5)/(1+state.upgrades.sign*.16)*(1.25-state.reputation/200)}updateCustomers(dt)}
-      staffTimer-=dt;
-      if(state.upgrades.staff>0&&staffTimer<=0){staffTimer=14;const low=availableProducts().filter(p=>(state.stocks[p.id]||0)<shelfCapacity(p)*.4).sort((a,b)=>(state.stocks[a.id]||0)/shelfCapacity(a)-(state.stocks[b.id]||0)/shelfCapacity(b));low.slice(0,state.upgrades.staff).forEach(p=>{const amount=Math.min(4*state.upgrades.staff,shelfCapacity(p)-(state.stocks[p.id]||0));const cost=amount*p.cost;if(amount>0&&state.cash>=cost){state.cash-=cost;state.stocks[p.id]=(state.stocks[p.id]||0)+amount;log("Staff restocked "+p.name.toLowerCase()+".")}});renderProducts();renderUpgrades()}
-      const second=Math.floor(state.elapsed);if(second!==lastStatsSecond){lastStatsSecond=second;renderStats()}
-      saveTimer+=dt;if(saveTimer>=5){saveTimer=0;save()}
-    }
-    drawStore();animation=requestAnimationFrame(frame);
-  }
-  $("restock-all").addEventListener("click",()=>availableProducts().forEach(p=>restock(p.id,12)));
-  $("product-list").addEventListener("click",()=>{});
-  document.querySelectorAll(".management-tab").forEach(tab=>tab.addEventListener("click",()=>{
-    document.querySelectorAll(".management-tab").forEach(t=>t.classList.toggle("active",t===tab));
-    $("stock-tab").classList.toggle("hidden",tab.dataset.tab!=="stock");$("business-tab").classList.toggle("hidden",tab.dataset.tab!=="business");
-  }));
-  $("pause-button").addEventListener("click",()=>{state.paused=!state.paused;renderStats();save()});
-  $("close-day").addEventListener("click",endDay);$("next-day").addEventListener("click",nextDay);
-  $("fullscreen-button").addEventListener("click",async()=>{try{if(!document.fullscreenElement)await document.querySelector(".shop-main").requestFullscreen();else await document.exitFullscreen()}catch{}});
-  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&document.fullscreenElement)document.exitFullscreen()});
-  window.addEventListener("beforeunload",save);
-  renderAll();log("Your shop is ready. Open for business!");drawStore();animation=requestAnimationFrame(frame);
+(()=>{
+"use strict";
+const $=id=>document.getElementById(id),canvas=$("world"),ctx=canvas.getContext("2d",{alpha:false});
+const SAVE="taravo-corner-market-v2",W=960,H=600;
+const defs=[{id:"apple",name:"Apples",emoji:"🍎",cost:2,price:4,color:"#e45d50"},{id:"bread",name:"Bread",emoji:"🍞",cost:3,price:6,color:"#d5a05c"},{id:"milk",name:"Milk",emoji:"🥛",cost:4,price:8,color:"#8bbbd2"},{id:"cereal",name:"Cereal",emoji:"🥣",cost:5,price:10,color:"#e3b65e"},{id:"flowers",name:"Flowers",emoji:"💐",cost:8,price:16,color:"#c78ac2"},{id:"plant",name:"Plants",emoji:"🪴",cost:12,price:24,color:"#73a979"}];
+const base=()=>({cash:120,day:1,level:1,xp:0,rep:50,sales:0,shiftSales:0,customers:0,up:{shelf:0,sign:0,cart:0},stock:{apple:0,bread:0,milk:0,cereal:0,flowers:0,plant:0},prices:Object.fromEntries(defs.map(p=>[p.id,p.price])),boxes:2,player:{x:450,y:500},elapsed:0,served:0});
+let s=base();try{const v=JSON.parse(localStorage.getItem(SAVE));if(v&&v.v===2)s={...s,...v.s,up:{...s.up,...v.s.up},stock:{...s.stock,...v.s.stock},prices:{...s.prices,...v.s.prices}}}catch{}
+let keys={},last=performance.now(),paused=false,report=false,customers=[],spawn=5,logText="Your first delivery is waiting in the stockroom.",near="",held=null,boxType="apple",taskDone={box:false,stock:false,serve:false};
+const shelves=[{x:240,y:180,id:"apple"},{x:420,y:180,id:"bread"},{x:600,y:180,id:"milk"},{x:780,y:180,id:"cereal"},{x:330,y:330,id:"flowers"},{x:690,y:330,id:"plant"}];
+const player={x:s.player.x||450,y:s.player.y||500,r:13};
+function save(){try{localStorage.setItem(SAVE,JSON.stringify({v:2,s:{...s,player:{x:player.x,y:player.y}}}))}catch{}}
+function say(t){logText=t;$("log").textContent=t}
+function money(n){return "$"+Math.round(n)}
+function activeShelves(){return shelves.slice(0,4+s.up.shelf)}
+function product(id){return defs.find(p=>p.id===id)}
+function addXP(n){s.xp+=n;const l=1+Math.floor(s.xp/65);if(l>s.level){s.level=l;say("Store level "+l+"! New products and upgrades are available.")}}
+function order(){if(s.cash<18){say("Not enough cash for a delivery.");return} s.cash-=18;s.boxes++;say("Delivery arrived in the stockroom. Pick up a box.");renderHud()}
+function interact(){
+if(report||paused)return;
+if(held){const shelf=activeShelves().find(a=>Math.hypot(player.x-a.x,player.y-a.y)<46);if(shelf){if(shelf.id!==held.id){say("That box is for "+product(held.id).name+". Find its shelf.");return}const qty=Math.min(8,24-s.stock[held.id]);if(qty<=0){say("That shelf is full.");return}s.stock[held.id]+=qty;held=null;taskDone.stock=true;addXP(5);say("Stocked "+qty+" units of "+product(shelf.id).name+".");renderTasks();renderHud();save();return}
+if(Math.hypot(player.x-85,player.y-475)<58){say("Put the box on the stockroom pallet first?");return}}
+if(Math.hypot(player.x-85,player.y-475)<58&&!held){if(s.boxes<=0){say("No deliveries waiting. Order a box.");return}const choices=defs.filter(p=>s.level>=Math.max(1,defs.indexOf(p)-1));boxType=choices[Math.floor(Math.random()*Math.min(choices.length,4))].id;held={id:boxType};s.boxes--;taskDone.box=true;say("Picked up a "+product(boxType).name+" box. Take it to the matching shelf.");renderTasks();renderHud();save();return}
+const shelf=activeShelves().find(a=>Math.hypot(player.x-a.x,player.y-a.y)<48);if(shelf){const p=product(shelf.id);if(s.stock[p.id]>0){const amount=Math.min(3,s.stock[p.id]);s.stock[p.id]-=amount;held={id:p.id};say("Picked up "+amount+" "+p.name+". Put it back down with E.");}else say(p.name+" shelf is empty. Order stock and carry a box here.");return}
+const register={x:855,y:475};if(Math.hypot(player.x-register.x,player.y-register.y)<62){const c=customers.find(c=>c.phase==="queue");if(c){customers.splice(customers.indexOf(c),1);const total=c.items.reduce((sum,id)=>sum+s.prices[id],0);s.cash+=total;s.sales+=total;s.shiftSales+=total;s.served++;s.customers++;s.rep=Math.min(100,s.rep+.7);addXP(7);taskDone.serve=true;say("Checkout complete: "+money(total)+". Customer served!");renderTasks();renderHud();save()}else say("No one is waiting at checkout.");return}
+say("Nothing to interact with here.")}
+function move(dt){let dx=0,dy=0;if(keys.ArrowLeft||keys.a)dx--;if(keys.ArrowRight||keys.d)dx++;if(keys.ArrowUp||keys.w)dy--;if(keys.ArrowDown||keys.s)dy++;if(dx||dy){const n=Math.hypot(dx,dy),speed=180+s.up.cart*35;player.x=Math.max(38,Math.min(922,player.x+dx/n*speed*dt));player.y=Math.max(112,Math.min(565,player.y+dy/n*speed*dt));}}
+function spawnCustomer(){if(customers.length>=4+s.up.sign)return;const choices=activeShelves().filter(sh=>s.stock[sh.id]>0);const want=choices.length?choices[Math.floor(Math.random()*choices.length)].id:null;customers.push({x:900,y:530,target:want,phase:want?"browse":"queue",wait:3+Math.random()*3,items:want?[want]:[],color:["#548fc5","#d98569","#8b79b8","#4b9d7d"][Math.floor(Math.random()*4)]});}
+function customerUpdate(dt){for(const c of [...customers]){if(c.phase==="browse"){c.wait-=dt;if(c.wait<=0){c.phase="queue";c.x=850;c.y=475}}else if(c.phase==="queue"&&!c.counted){c.counted=true;c.wait=22;if(c.wait<=0){customers.splice(customers.indexOf(c),1);s.rep=Math.max(0,s.rep-1)}}}}
+function draw(){
+ctx.fillStyle="#e8e7dc";ctx.fillRect(0,0,W,H);
+ctx.fillStyle="#d8d7cb";ctx.fillRect(20,20,920,560);
+ctx.fillStyle="#f5f2e8";ctx.fillRect(35,35,890,530);
+ctx.fillStyle="#c6d7c8";ctx.fillRect(35,35,890,52);ctx.fillStyle="#46604e";ctx.font="bold 17px system-ui";ctx.fillText("CORNER MARKET",55,68);
+ctx.fillStyle="#d9c7a8";ctx.fillRect(35,105,890,435);
+ctx.strokeStyle="#cbbda5";ctx.lineWidth=2;for(let y=120;y<540;y+=42){ctx.beginPath();ctx.moveTo(40,y);ctx.lineTo(920,y);ctx.stroke()}
+ctx.fillStyle="#c6a06e";ctx.fillRect(40,420,95,110);ctx.fillStyle="#6e5339";ctx.font="bold 11px system-ui";ctx.fillText("STOCKROOM",45,410);ctx.fillStyle="#fff3dc";ctx.font="30px system-ui";ctx.fillText("📦",65,475);ctx.font="bold 11px system-ui";ctx.fillText("BOXES: "+s.boxes,47,515);
+for(const sh of activeShelves()){const p=product(sh.id);ctx.fillStyle="#966d49";ctx.fillRect(sh.x-64,sh.y-27,128,55);ctx.fillStyle="#c3945e";ctx.fillRect(sh.x-64,sh.y-27,128,9);ctx.fillStyle=p.color;for(let i=0;i<Math.min(8,Math.ceil(s.stock[sh.id]/3));i++){ctx.fillRect(sh.x-52+i*14,sh.y-10,10,24)}ctx.fillStyle="#fff";ctx.font="bold 10px system-ui";ctx.fillText(p.name.toUpperCase(),sh.x-58,sh.y+19);ctx.fillStyle="#38473c";ctx.font="10px system-ui";ctx.fillText(s.stock[sh.id]+" in stock",sh.x-27,sh.y+42)}
+ctx.fillStyle="#759d82";ctx.fillRect(805,440,100,70);ctx.fillStyle="#fff";ctx.font="bold 12px system-ui";ctx.fillText("CHECKOUT",819,480);
+customers.forEach(c=>{ctx.fillStyle=c.color;ctx.beginPath();ctx.arc(c.x,c.y,12,0,Math.PI*2);ctx.fill();ctx.fillStyle="#f1c9a8";ctx.beginPath();ctx.arc(c.x,c.y-13,7,0,Math.PI*2);ctx.fill()});
+ctx.fillStyle="#0002";ctx.beginPath();ctx.ellipse(player.x,player.y+11,13,5,0,0,Math.PI*2);ctx.fill();ctx.fillStyle="#276eaa";ctx.beginPath();ctx.arc(player.x,player.y,13,0,Math.PI*2);ctx.fill();ctx.fillStyle="#f0c5a0";ctx.beginPath();ctx.arc(player.x,player.y-14,8,0,Math.PI*2);ctx.fill();
+if(held){ctx.fillStyle="#fff";ctx.fillRect(player.x+10,player.y-25,18,18);ctx.font="14px system-ui";ctx.fillText(product(held.id).emoji,player.x+10,player.y-10)}
+const candidates=[{x:85,y:475,label:"STOCKROOM"},{x:855,y:475,label:"CHECKOUT"},...activeShelves().map(sh=>({...sh,label:product(sh.id).name}))];const close=candidates.find(a=>Math.hypot(player.x-a.x,player.y-a.y)<58);near=close?(held?"E · STOCK "+product(held.id).name:"E · "+close.label):"";$("nearby").textContent=near;
+}
+function renderHud(){$("cash").textContent=money(s.cash);$("sales").textContent=money(s.shiftSales);$("rep").textContent=Math.round(s.rep);$("level").textContent=s.level;$("day-label").textContent="Day "+s.day+" · "+(report?"Shift complete":"Opening shift");$("order-cost").textContent="from $18";$("held").textContent=held?product(held.id).name+" box":"Empty";$("hand-tip").textContent=held?"Take it to its matching shelf and press E.":"Pick up a delivery box from the stockroom."}
+function renderTasks(){const list=$("tasks");list.replaceChildren();const tasks=[["box","Pick up a delivery box"],["stock","Stock a shelf"],["serve","Serve a customer"]];$("task-count").textContent=tasks.filter(t=>taskDone[t[0]]).length+" / 3";tasks.forEach(([id,label])=>{const li=document.createElement("li");if(taskDone[id])li.className="done";const mark=document.createElement("span");mark.textContent=taskDone[id]?"✓":"";li.append(mark,document.createTextNode(label));list.append(li)})}
+function renderUpgrades(){const el=$("upgrades");el.replaceChildren();const items=[["shelf","Extra aisle",180,"Unlock two more shelves."],["sign","Window sign",240,"More customers visit."],["cart","Stock trolley",150,"Move faster around the store."]];items.forEach(([id,name,cost,desc])=>{const row=document.createElement("div");row.className="upgrade";const label=document.createElement("span");label.textContent=name+" · "+desc;const b=document.createElement("button");b.textContent=money(cost);b.disabled=s.cash<cost||s.up[id]>=2;b.addEventListener("click",()=>{if(s.cash<cost||s.up[id]>=2)return;s.cash-=cost;s.up[id]++;say(name+" upgraded.");renderHud();renderUpgrades();save()});row.append(label,b);el.append(row)})}
+function closeShift(){if(report)return;report=true;paused=true;const wages=12+s.up.shelf*4,profit=s.shiftSales-wages;s.cash-=wages;s.rep=Math.max(0,Math.min(100,s.rep+(profit>=0?1:-2)));addXP(Math.max(5,Math.floor(Math.max(0,profit)/10)));$("report-title").textContent="Day "+s.day+" wrapped";$("report-stats").className="report-stats";$("report-stats").innerHTML="<span>Sales</span><b>"+money(s.shiftSales)+"</b><span>Staff and rent</span><b>−"+money(wages)+"</b><span>Shift result</span><b>"+money(profit)+"</b><span>Customers served</span><b>"+s.served+"</b>";$("report").classList.remove("hidden");$("status").textContent="CLOSED";save()}
+function nextDay(){s.day++;s.shiftSales=0;s.elapsed=0;s.served=0;customers=[];report=false;paused=false;taskDone={box:false,stock:false,serve:false};$("report").classList.add("hidden");$("status").textContent="OPEN";say("Day "+s.day+" begins. Your shop is ready.");renderHud();renderTasks();save()}
+function loop(now){const dt=Math.min(.04,(now-last)/1000||0);last=now;if(!paused&&!report){move(dt);s.elapsed+=dt;spawn-=dt;if(spawn<=0){spawnCustomer();spawn=7.5/(1+s.up.sign*.3)}customerUpdate(dt);const mins=Math.floor(s.elapsed/12);$("clock").textContent=(8+Math.floor(mins/60))+":"+String(mins%60).padStart(2,"0")+" AM";$("shift-fill").style.width=Math.min(100,s.elapsed/180*100)+"%";if(s.elapsed>=180)closeShift();}draw();requestAnimationFrame(loop)}
+window.addEventListener("keydown",e=>{if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"," "].includes(e.key))e.preventDefault();if(e.key.toLowerCase()==="e"&&!e.repeat)interact();keys[e.key]=true});window.addEventListener("keyup",e=>keys[e.key]=false);window.addEventListener("blur",()=>keys={});
+$("order").addEventListener("click",order);$("pause").addEventListener("click",()=>{if(report)return;paused=!paused;$("pause").textContent=paused?"Resume":"Pause"});$("next-day").addEventListener("click",closeShift);$("continue").addEventListener("click",nextDay);$("fullscreen").addEventListener("click",async()=>{try{if(!document.fullscreenElement)await document.querySelector(".shop-main").requestFullscreen();else await document.exitFullscreen()}catch{}});
+renderHud();renderTasks();renderUpgrades();$("log").textContent=logText;requestAnimationFrame(loop);setInterval(save,5000);window.addEventListener("beforeunload",save);
 })();
