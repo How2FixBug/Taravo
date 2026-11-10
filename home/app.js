@@ -1,5 +1,6 @@
 const GAMES = [
-  { id: "brick-breaker", title: "Brick Breaker", description: "Bounce, break, and clear the board.", path: "games/brick-breaker/" }
+  { id: "brick-breaker", title: "Brick Breaker", description: "Bounce, break, and clear the board.", path: "games/brick-breaker/" },
+  { id: "stackrush", title: "Stack Rush", description: "Line up the blocks. Keep the tower going.", path: "games/stackrush/" }
 ];
 const FAVORITES_KEY = "taravo-favorites";
 const appScript = document.querySelector('script[src$="app.js"]');
