@@ -1,5 +1,5 @@
 // Add games to this list. Each game needs a unique id, title, description, and url.
-const GAMES = [];
+const GAMES = [\n  { id: "stackrush", title: "Stackrush", description: "Stack cargo crates at a busy little harbor.", url: "../games/stackrush/" }\n];
 
 const FAVORITES_KEY = "taravo-favorites";
 
@@ -17,7 +17,7 @@ function saveFavorites(ids) {
 
 function createGameCard(game, favorites) {
   const card = document.createElement("article");
-  card.className = "game-card";
+  card.className = "game-card";\n  card.dataset.game = game.id;
 
   const art = document.createElement("div");
   art.className = "game-art";
