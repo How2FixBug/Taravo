@@ -180,3 +180,15 @@ h1 { margin: 0; font-size: clamp(2rem, 4vw, 2.8rem); letter-spacing: -.055em; }
 .game-card[data-game="stackrush"] .game-art:after{content:"";position:absolute;left:calc(50% + 33px);top:57%;width:25px;height:25px;transform:translateY(-50%) skewY(30deg);background:#b92f52;box-shadow:0 -25px #c58e27,0 -50px #006e9f,0 -75px #438c00}
 
 .game-card[data-game="brick-breaker"] .game-art{background:#fff url("../games/brick-breaker/thumbnail.svg") center/cover no-repeat}
+
+:root[data-theme="light"]{color-scheme:light;--background:#f3f5f7;--surface:#fff;--surface-raised:#e9edf1;--text:#171b20;--muted:#68727e;--border:#d9dfe5}
+:root[data-theme="light"] body{background:var(--background);color:var(--text)}
+:root[data-theme="light"] .sidebar{background:#fff}
+:root[data-theme="light"] .nav-link:hover{background:#f0f2f5}
+:root[data-theme="light"] .nav-link.active{background:color-mix(in srgb,var(--accent) 14%,white)}
+:root[data-theme="light"] .empty-state{background:#fff}
+:root[data-accent="blue"]{--accent:#62b8ff}
+:root[data-accent="purple"]{--accent:#b69aff}
+:root[data-accent="orange"]{--accent:#ffad66}
+:root[data-accent="mint"]{--accent:#62e6b5}
+.reduce-motion *, .reduce-motion *:before, .reduce-motion *:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
