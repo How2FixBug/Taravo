@@ -99,18 +99,6 @@ function renderGames(search = "") {
     }
   }
 
-  const featured = document.getElementById("featured-games");
-  if (featured) {
-    featured.replaceChildren();
-    const featuredGames = GAMES.filter(game => game.featured).slice(0, 2);
-    featuredGames.forEach(game => featured.append(createGameCard(game, favorites)));
-    if (!featuredGames.length) {
-      const empty = document.createElement("p");
-      empty.className = "subtle-empty";
-      empty.textContent = "Featured games will appear here.";
-      featured.append(empty);
-    }
-  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
