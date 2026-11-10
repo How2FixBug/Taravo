@@ -9,6 +9,8 @@
   const overlay = document.getElementById("overlay");
   const overlayTitle = document.getElementById("overlay-title");
   const startButton = document.getElementById("start-button");
+  const settingsMenuButton = document.getElementById("settings-menu-button");
+  const restartButton = document.getElementById("restart-button");
   const settingsBackdrop = document.getElementById("settings-backdrop");
   const settingsButton = document.getElementById("settings-button");
   const closeSettings = document.getElementById("close-settings");
@@ -56,7 +58,7 @@
     const cameraLift = Math.max(0, blocks.length - 7) * 27;
     return {
       x: W / 2 + (rx - rz) * 47,
-      y: 520 + (rx + rz) * 23 - y * 35 - cameraLift
+      y: 520 + (rx + rz) * 23 - y * 35 + cameraLift
     };
   }
 
@@ -225,13 +227,20 @@
     spawn();
   }
 
-  function finish() {
+  function showMenu(mode = "menu") {
     running = false;
-    active = null;
-    overlayTitle.textContent = "Nice stack";
-    startButton.textContent = "Play again";
+    overlayTitle.textContent = mode === "gameover" ? "Game over" : mode === "pause" ? "Paused" : "Stack Rush";
+    startButton.textContent = mode === "pause" ? "Resume" : mode === "gameover" ? "Play again" : "Play";
+    restartButton.hidden = mode !== "pause";
     overlay.classList.remove("hidden");
+    if (frame) cancelAnimationFrame(frame);
+    frame = 0;
     drawScene();
+  }
+
+  function finish() {
+    active = null;
+    showMenu("gameover");
   }
 
   function reset() {
@@ -246,6 +255,7 @@
     comboNode.textContent = "×1";
     overlayTitle.textContent = "Stack Rush";
     startButton.textContent = "Play";
+    restartButton.hidden = true;
     overlay.classList.add("hidden");
     running = true;
     lastTime = 0;
@@ -309,7 +319,7 @@
   }
 
   function openSettings() {
-    running = false;
+    if (running) showMenu("pause");
     settingsBackdrop.classList.remove("hidden");
     settingsBackdrop.setAttribute("aria-hidden", "false");
     if (frame) cancelAnimationFrame(frame);
@@ -319,14 +329,17 @@
   function closeSettingsPanel() {
     settingsBackdrop.classList.add("hidden");
     settingsBackdrop.setAttribute("aria-hidden", "true");
-    if (active) {
-      running = true;
-      lastTime = 0;
-      if (!frame) frame = requestAnimationFrame(loop);
-    }
+    // Keep the game paused behind the menu/settings overlay.
   }
 
-  startButton.addEventListener("click", reset);
+  startButton.addEventListener("click", () => {
+    if (startButton.textContent === "Resume" && active) {
+      running = true; lastTime = 0; overlay.classList.add("hidden");
+      if (!frame) frame = requestAnimationFrame(loop);
+    } else reset();
+  });
+  restartButton.addEventListener("click", reset);
+  settingsMenuButton.addEventListener("click", openSettings);
   let pointerStart = null;
   canvas.addEventListener("pointerdown", event => {
     if (!running) return;
@@ -343,7 +356,7 @@
     else place();
   });
   canvas.addEventListener("pointercancel", () => { pointerStart = null; });
-  settingsButton.addEventListener("click", openSettings);
+  settingsButton.addEventListener("click", () => showMenu(running ? "pause" : "menu"));
   closeSettings.addEventListener("click", closeSettingsPanel);
   settingsBackdrop.addEventListener("pointerdown", event => {
     if (event.target === settingsBackdrop) closeSettingsPanel();
@@ -373,10 +386,13 @@
       closeSettingsPanel();
       return;
     }
+    if (event.code === "Escape" && running) { showMenu("pause"); return; }
     if (event.code === "Space") {
       event.preventDefault();
-      if (!running && overlay.classList.contains("hidden") === false) reset();
-      else place();
+      if (!running && overlay.classList.contains("hidden") === false) {
+        if (startButton.textContent === "Resume" && active) { running = true; lastTime = 0; overlay.classList.add("hidden"); if (!frame) frame = requestAnimationFrame(loop); }
+        else reset();
+      } else place();
     }
     if (event.code === "ArrowLeft" || event.code === "KeyA") rotateView(-1);
     if (event.code === "ArrowRight" || event.code === "KeyD") rotateView(1);
