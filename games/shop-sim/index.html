@@ -1,63 +1,21 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#08090b">
-  <title>Shop Sim — taravo</title>
-  <link rel="stylesheet" href="../../home/style.css">
-  <link rel="stylesheet" href="game.css">
-  <script src="../../home/global-settings.js" defer></script>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#08090b"><title>Corner Market — taravo</title>
+<link rel="stylesheet" href="../../home/style.css"><link rel="stylesheet" href="game.css">
+<script src="../../home/global-settings.js" defer></script>
 </head>
 <body class="game-page shop-page">
-  <aside class="sidebar">
-    <a class="brand" href="../../home/" aria-label="taravo home">taravo</a>
-    <nav class="navigation" aria-label="Main navigation">
-      <a class="nav-link" href="../../home/"><span class="nav-icon">⌂</span>Home</a>
-      <a class="nav-link active" href="../"><span class="nav-icon">▦</span>Games</a>
-      <a class="nav-link" href="../../favorites/"><span class="nav-icon">☆</span>Favorites</a>
-      <a class="nav-link" href="../../settings/"><span class="nav-icon">⚙</span>Settings</a>
-    </nav>
-    <div class="sidebar-bottom"><span class="sidebar-caption">fun games</span></div>
-  </aside>
-  <main class="main-content shop-main">
-    <header class="shop-header">
-      <div class="shop-heading"><a class="back-link" href="../" aria-label="Back to games">←</a><div><h1>Corner Market</h1><p id="store-level">Level 1 · New business</p></div></div>
-      <div class="shop-header-actions"><div class="day-chip"><span>DAY</span><strong id="day-number">1</strong></div><button id="pause-button" class="shop-icon-button" type="button" aria-label="Pause simulation">Ⅱ</button><button id="fullscreen-button" class="shop-small-button" type="button">⛶ <span>Fullscreen</span></button></div>
-    </header>
-    <section class="shop-stats" aria-label="Store finances">
-      <div><span>Cash</span><strong id="cash-value">$350</strong></div>
-      <div><span>Today</span><strong id="today-value">$0</strong></div>
-      <div><span>Customers</span><strong id="customer-value">0</strong></div>
-      <div><span>Reputation</span><strong id="reputation-value">50</strong></div>
-      <div class="day-progress"><div><span>STORE HOURS</span><strong id="clock-value">8:00 AM</strong></div><div class="progress-track"><i id="day-progress"></i></div></div>
-    </section>
-    <div class="shop-layout">
-      <section class="store-panel">
-        <div class="store-panel-top"><div><span class="panel-kicker">YOUR STORE</span><strong>Floor view</strong></div><span class="open-status" id="open-status"><i></i> OPEN</span></div>
-        <div class="store-stage"><canvas id="store-canvas" width="960" height="560" aria-label="Live view of your shop, shelves and customers"></canvas><div class="canvas-label">CORNER MARKET <span>EST. DAY 1</span></div></div>
-        <div class="store-footer"><span><i class="legend-dot shelf-dot"></i> Shelves</span><span><i class="legend-dot customer-dot"></i> Customers</span><span><i class="legend-dot checkout-dot"></i> Checkout</span><span id="visitor-message">Your first customers are on their way.</span></div>
-      </section>
-      <aside class="management-panel">
-        <div class="management-tabs" role="tablist" aria-label="Management sections">
-          <button class="management-tab active" data-tab="stock" type="button">Stock</button>
-          <button class="management-tab" data-tab="business" type="button">Business</button>
-        </div>
-        <section id="stock-tab" class="management-content">
-          <div class="panel-title-row"><div><span class="panel-kicker">INVENTORY</span><h2>Products</h2></div><span class="tiny-count" id="shelf-count">4 shelves</span></div>
-          <div id="product-list" class="product-list"></div>
-          <button id="restock-all" class="wide-action" type="button">Restock all shelves <span>↗</span></button>
-        </section>
-        <section id="business-tab" class="management-content hidden">
-          <div class="panel-title-row"><div><span class="panel-kicker">GROW YOUR STORE</span><h2>Business</h2></div></div>
-          <div class="upgrade-list" id="upgrade-list"></div>
-          <div class="business-summary"><span>Daily rent</span><strong id="rent-value">$35</strong><span>Staff wages</span><strong id="wages-value">$0</strong></div>
-        </section>
-      </aside>
-    </div>
-    <section class="bottom-bar"><div><span class="panel-kicker">STORE ACTIVITY</span><div id="activity-feed" aria-live="polite"><p>Your shop is ready. Open for business!</p></div></div><button id="close-day" class="close-day-button" type="button">Close day <span>→</span></button></section>
-    <div class="day-report hidden" id="day-report" role="dialog" aria-modal="true" aria-labelledby="report-title"><div class="report-card"><span class="panel-kicker">END OF DAY</span><h2 id="report-title">Day complete</h2><div id="report-content"></div><button id="next-day" class="wide-action" type="button">Open tomorrow <span>→</span></button></div></div>
-  </main>
-  <script src="game.js"></script>
-</body>
-</html>
+<aside class="sidebar"><a class="brand" href="../../home/">taravo</a><nav class="navigation" aria-label="Main navigation">
+<a class="nav-link" href="../../home/"><span class="nav-icon">⌂</span>Home</a><a class="nav-link active" href="../"><span class="nav-icon">▦</span>Games</a><a class="nav-link" href="../../favorites/"><span class="nav-icon">☆</span>Favorites</a><a class="nav-link" href="../../settings/"><span class="nav-icon">⚙</span>Settings</a></nav><div class="sidebar-bottom"><span class="sidebar-caption">fun games</span></div></aside>
+<main class="main-content shop-main">
+<header class="shop-header"><div class="shop-heading"><a class="back-link" href="../">←</a><div><h1>Corner Market</h1><p id="day-label">Day 1 · Opening shift</p></div></div><div class="shop-actions"><span class="cash-chip" id="cash">$120</span><button id="pause" class="shop-button" type="button">Pause</button><button id="fullscreen" class="shop-button" type="button">⛶</button></div></header>
+<section class="hud"><div><small>STORE LEVEL</small><strong id="level">1</strong></div><div><small>SALES TODAY</small><strong id="sales">$0</strong></div><div><small>REPUTATION</small><strong id="rep">50</strong></div><div class="shift"><small>SHIFT</small><strong id="clock">8:00 AM</strong><span class="shift-track"><i id="shift-fill"></i></span></div></section>
+<section class="game-layout">
+<div class="world-card"><div class="world-top"><strong>THE SHOP FLOOR</strong><span id="status">OPEN</span></div><div class="world-wrap"><canvas id="world" width="960" height="600" aria-label="Shop floor game. Use WASD or arrow keys to move, E to interact."></canvas><div class="world-hint" id="hint">WASD / ARROWS MOVE <b>·</b> E INTERACT</div></div><div class="world-bottom"><span id="objective">Pick up a delivery box from the back room.</span><span id="nearby"> </span></div></div>
+<aside class="side-panel"><section><div class="panel-heading"><small>YOUR HANDS</small><strong id="held">Empty</strong></div><p id="hand-tip">Walk to the delivery stack and press E.</p></section><section><div class="panel-heading"><small>STORE TASKS</small><span id="task-count">0 / 3</span></div><ul class="task-list" id="tasks"></ul></section><section><div class="panel-heading"><small>SUPPLY ORDER</small><span id="order-cost">from $18</span></div><div class="order-row"><span>📦 Mixed stock box</span><button id="order" type="button">Order</button></div><p class="muted">Boxes arrive in the stockroom. Carry them to an empty shelf.</p></section><section><div class="panel-heading"><small>STORE UPGRADES</small></div><div id="upgrades" class="upgrades"></div></section></aside>
+</section>
+<section class="activity"><div><small>SHOP LOG</small><p id="log">Your first delivery is waiting in the stockroom.</p></div><button id="next-day" type="button">Close shift →</button></section>
+<div class="modal hidden" id="report"><div class="report-card"><small>SHIFT SUMMARY</small><h2 id="report-title">Day complete</h2><div id="report-stats"></div><button id="continue" type="button">Open tomorrow</button></div></div>
+</main><script src="game.js"></script></body></html>
