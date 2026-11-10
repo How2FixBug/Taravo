@@ -12,7 +12,7 @@
   const settingsMenuButton = document.getElementById("settings-menu-button");
   const restartButton = document.getElementById("restart-button");
   const settingsBackdrop = document.getElementById("settings-backdrop");
-  const settingsButton = document.getElementById("settings-button");
+  const menuButton = document.getElementById("menu-button");
   const closeSettings = document.getElementById("close-settings");
   const fullscreenButton = document.getElementById("fullscreen-button");
   const particlesToggle = document.getElementById("particles-toggle");
@@ -356,7 +356,7 @@
     else place();
   });
   canvas.addEventListener("pointercancel", () => { pointerStart = null; });
-  settingsButton.addEventListener("click", () => showMenu(running ? "pause" : "menu"));
+  menuButton.addEventListener("click", () => showMenu(running ? "pause" : "menu"));
   closeSettings.addEventListener("click", closeSettingsPanel);
   settingsBackdrop.addEventListener("pointerdown", event => {
     if (event.target === settingsBackdrop) closeSettingsPanel();
