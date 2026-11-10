@@ -4,7 +4,7 @@
   const overlay=document.getElementById("overlay"),titleEl=document.getElementById("overlay-title"),copyEl=document.getElementById("overlay-copy"),button=document.getElementById("start-button");
   const W=1100,H=720,colors=["#ff5364","#ff9f32","#ffd447","#6bd65c","#25c7a8","#36a9ff","#8165ef","#e65ac1"];
   let score=0,best=Number(localStorage.getItem("taravo-breaker-best")||0),level=1,lives=3,bricks=[],particles=[],ball=null,paddle=null,running=false,paused=false,last=0,keys={};
-  let pointerX=W/2;
+  let pointerX=W/2,trail=[];
   let gamePrefs={particles:true,sensitivity:100};
   try{gamePrefs={...gamePrefs,...JSON.parse(localStorage.getItem("taravo-settings")||"{}")}}catch{}
   bestEl.textContent=best;
