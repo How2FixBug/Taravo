@@ -11,7 +11,7 @@ const player={x:s.player.x||450,y:s.player.y||500,r:13};
 function save(){try{localStorage.setItem(SAVE,JSON.stringify({v:2,s:{...s,player:{x:player.x,y:player.y}}}))}catch{}}
 function say(t){logText=t;$("log").textContent=t}
 function money(n){return "$"+Math.round(n)}
-function activeShelves(){return shelves.slice(0,4+s.up.shelf)}
+function activeShelves(){return shelves.slice(0,4+s.up.shelf).filter((sh,i)=>s.level>=Math.max(1,i-1))}
 function product(id){return defs.find(p=>p.id===id)}
 function addXP(n){s.xp+=n;const l=1+Math.floor(s.xp/65);if(l>s.level){s.level=l;say("Store level "+l+"! New products and upgrades are available.")}}
 function order(){if(s.cash<18){say("Not enough cash for a delivery.");return} s.cash-=18;s.boxes++;say("Delivery arrived in the stockroom. Pick up a box.");renderHud()}
@@ -19,7 +19,7 @@ function interact(){
 if(report||paused)return;
 if(held){const shelf=activeShelves().find(a=>Math.hypot(player.x-a.x,player.y-a.y)<46);if(shelf){if(shelf.id!==held.id){say("That box is for "+product(held.id).name+". Find its shelf.");return}const qty=Math.min(8,24-s.stock[held.id]);if(qty<=0){say("That shelf is full.");return}s.stock[held.id]+=qty;held=null;taskDone.stock=true;addXP(5);say("Stocked "+qty+" units of "+product(shelf.id).name+".");renderTasks();renderHud();save();return}
 if(Math.hypot(player.x-85,player.y-475)<58){say("Put the box on the stockroom pallet first?");return}}
-if(Math.hypot(player.x-85,player.y-475)<58&&!held){if(s.boxes<=0){say("No deliveries waiting. Order a box.");return}const choices=defs.filter(p=>s.level>=Math.max(1,defs.indexOf(p)-1));boxType=choices[Math.floor(Math.random()*Math.min(choices.length,4))].id;held={id:boxType};s.boxes--;taskDone.box=true;say("Picked up a "+product(boxType).name+" box. Take it to the matching shelf.");renderTasks();renderHud();save();return}
+if(Math.hypot(player.x-85,player.y-475)<58&&!held){if(s.boxes<=0){say("No deliveries waiting. Order a box.");return}const choices=activeShelves().map(sh=>product(sh.id));boxType=choices[Math.floor(Math.random()*choices.length)].id;held={id:boxType};s.boxes--;taskDone.box=true;say("Picked up a "+product(boxType).name+" box. Take it to the matching shelf.");renderTasks();renderHud();save();return}
 const shelf=activeShelves().find(a=>Math.hypot(player.x-a.x,player.y-a.y)<48);if(shelf){const p=product(shelf.id);if(s.stock[p.id]>0){const amount=Math.min(3,s.stock[p.id]);s.stock[p.id]-=amount;held={id:p.id};say("Picked up "+amount+" "+p.name+". Put it back down with E.");}else say(p.name+" shelf is empty. Order stock and carry a box here.");return}
 const register={x:855,y:475};if(Math.hypot(player.x-register.x,player.y-register.y)<62){const c=customers.find(c=>c.phase==="queue");if(c){customers.splice(customers.indexOf(c),1);const overpriced=c.items.some(id=>s.prices[id]>product(id).price*1.6);if(overpriced){customers.splice(customers.indexOf(c),1);s.rep=Math.max(0,s.rep-2);say("That customer thought the prices were too high. Try a smaller markup.");continue;}const total=c.items.reduce((sum,id)=>sum+s.prices[id],0);c.items.forEach(id=>{s.stock[id]=Math.max(0,s.stock[id]-1)});s.cash+=total;s.sales+=total;s.shiftSales+=total;s.served++;s.customers++;s.rep=Math.min(100,s.rep+.7);addXP(7);taskDone.serve=true;say("Checkout complete: "+money(total)+". Customer served!");renderTasks();renderHud();save()}else say("No one is waiting at checkout.");return}
 say("Nothing to interact with here.")}
