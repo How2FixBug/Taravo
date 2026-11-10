@@ -87,7 +87,7 @@
   settingsButton.addEventListener("click",openGameSettings);closeSettings.addEventListener("click",closeGameSettings);settingsPopup.addEventListener("click",e=>{if(e.target===settingsPopup)closeGameSettings()});
   particlesInput.addEventListener("change",()=>{gamePrefs.particles=particlesInput.checked;saveGamePrefs()});
   sensitivityInput.addEventListener("input",()=>{gamePrefs.sensitivity=Number(sensitivityInput.value);sensitivityValue.textContent=gamePrefs.sensitivity+"%";saveGamePrefs()});
-  document.getElementById("reset-best").addEventListener("click",()=>{best=0;bestEl.textContent="0";localStorage.removeItem("taravo-breaker-best")});
+  document.getElementById("reset-data").addEventListener("click",()=>{if(!window.confirm("Reset all Brick Breaker data? This will erase your best score and restore the game settings to their defaults."))return;best=0;bestEl.textContent="0";localStorage.removeItem("taravo-breaker-best");localStorage.removeItem("taravo-brick-breaker-settings");gamePrefs={particles:true,sensitivity:100};particlesInput.checked=true;sensitivityInput.value="100";sensitivityValue.textContent="100%";});
   button.addEventListener("click",()=>{if(paused&&titleEl.textContent!=="Game over"&&button.textContent==="Resume"){running=true;paused=false;last=0;overlay.classList.add("hidden");requestAnimationFrame(loop)}else start()});
   secondaryButton.addEventListener("click",start);
   menuButton.addEventListener("click",()=>{if(running)showMenu("pause");else showMenu("menu")});
