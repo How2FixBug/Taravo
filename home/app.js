@@ -15,7 +15,7 @@ async function loadGames() {
     const game = await result.json();
     if (game.id !== id || !game.name || !game.description || !Array.isArray(game.tags) || !game.thumbnail) return null;
     return { ...game, title: game.name, path: `games/play.html?game=${encodeURIComponent(id)}`,
-      thumbnailUrl: new URL(`games/library/${id}/${game.thumbnail}`, TARAVO_ROOT).href };
+      thumbnailUrl: new URL(`games/library/${id}/${game.thumbnail}?v=${id === "brick-breaker" || id === "stack-rush" ? "original-art-2" : "1"}`, TARAVO_ROOT).href };
   }));
   GAMES = entries.filter(Boolean);
 }
