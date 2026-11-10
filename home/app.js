@@ -1,7 +1,7 @@
 const GAMES = [
   { id: "brick-breaker", title: "Brick Breaker", description: "Bounce, break, and clear the board.", path: "games/brick-breaker/" },
   { id: "stackrush", title: "Stack Rush", description: "Line up the blocks. Keep the tower going.", path: "games/stackrush/" },
-  { id: "shop-sim", title: "Shop Sim", description: "Stock the shelves. Grow your neighborhood store.", path: "games/shop-sim/" }
+  { id: "shop-sim", title: "Shop Sim", description: "Run the floor. Stock shelves. Build your corner store.", path: "games/shop-sim/" }
 ];
 const FAVORITES_KEY = "taravo-favorites";
 const appScript = document.querySelector('script[src$="app.js"]');
