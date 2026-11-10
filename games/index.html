@@ -2,15 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#08090b">
   <title>Games — taravo</title>
   <link rel="stylesheet" href="../home/style.css">
-  <link rel="stylesheet" href="player.css">
+  <script src="../home/app.js" defer></script>
   <script src="../home/global-settings.js" defer></script>
-  <script src="game-loader.js" defer></script>
 </head>
-<body data-page="game" class="game-page">
+<body data-page="games">
   <aside class="sidebar">
     <a class="brand" href="../home/" aria-label="taravo home">taravo</a>
     <nav class="navigation" aria-label="Main navigation">
@@ -22,14 +21,11 @@
     <div class="sidebar-bottom"><span class="sidebar-caption">fun games</span></div>
   </aside>
   <main class="main-content">
-    <header class="page-header game-page-header">
-      <div class="game-heading"><a class="back-link" href="./" aria-label="Back to games">←</a><h1 id="game-title">Loading game</h1></div>
-      <button class="page-fullscreen-button" id="fullscreen-button" type="button" title="Fullscreen">⛶ <span>Fullscreen</span></button>
+    <header class="page-header">
+      <div><h1>Games</h1></div>
+      <label class="search-wrap"><span aria-hidden="true">⌕</span><input class="game-search" type="search" placeholder="Search games..." aria-label="Search games"></label>
     </header>
-    <section id="game-frame-shell" class="game-frame-shell" aria-label="Game player">
-      <iframe id="game-frame" title="Game" allow="fullscreen" loading="eager"></iframe>
-    </section>
-    <section id="game-empty" class="empty-state" hidden><h2>Choose a game</h2><p>Go back to the games library and pick something to play.</p><a class="play-link" href="./">Browse games</a></section>
+    <section class="content-section"><div id="game-grid" class="game-grid"></div></section>
   </main>
 </body>
 </html>
