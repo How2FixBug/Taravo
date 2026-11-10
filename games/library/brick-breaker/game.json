@@ -1,0 +1,12 @@
+{
+  "id": "brick-breaker",
+  "name": "Brick Breaker",
+  "description": "Bounce, break, and clear the board.",
+  "tags": [
+    "arcade",
+    "skill",
+    "action",
+    "quick-play"
+  ],
+  "thumbnail": "thumbnail.svg"
+}
