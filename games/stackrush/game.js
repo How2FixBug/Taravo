@@ -327,11 +327,22 @@
   }
 
   startButton.addEventListener("click", reset);
+  let pointerStart = null;
   canvas.addEventListener("pointerdown", event => {
     if (!running) return;
     event.preventDefault();
-    place();
+    pointerStart = { x: event.clientX, y: event.clientY };
+    canvas.setPointerCapture?.(event.pointerId);
   });
+  canvas.addEventListener("pointerup", event => {
+    if (!running || !pointerStart) return;
+    const dx = event.clientX - pointerStart.x;
+    const dy = event.clientY - pointerStart.y;
+    pointerStart = null;
+    if (Math.abs(dx) > 28 && Math.abs(dx) > Math.abs(dy)) rotateView(dx > 0 ? 1 : -1);
+    else place();
+  });
+  canvas.addEventListener("pointercancel", () => { pointerStart = null; });
   settingsButton.addEventListener("click", openSettings);
   closeSettings.addEventListener("click", closeSettingsPanel);
   settingsBackdrop.addEventListener("pointerdown", event => {
