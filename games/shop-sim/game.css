@@ -2,3 +2,19 @@
 @media(max-width:1000px){.shop-main{width:calc(100% - 224px)}.game-layout{grid-template-columns:minmax(0,1fr) 230px}}@media(max-width:760px){.shop-main{width:100%;padding:22px 13px 40px!important}.game-layout{grid-template-columns:1fr}.side-panel{grid-template-columns:1fr 1fr}.side-panel section:nth-child(2){border-right:0}.hud{grid-template-columns:repeat(2,1fr)}.world-bottom{flex-wrap:wrap}.shop-heading h1{font-size:1.3rem}}@media(max-width:430px){.side-panel{grid-template-columns:1fr}.side-panel section{border-right:0!important}.shop-button{padding:0 8px}.hud>div{padding:8px}.activity{align-items:flex-end}}
 :root[data-theme="light"] .world-wrap{background:#e8e7dc}:root[data-theme="light"] .world-hint{color:#35443b}
 .price-list{display:grid;gap:7px;margin-top:10px}.price-line{display:grid;grid-template-columns:1fr auto;align-items:center;gap:7px}.price-line span{font-size:10px}.price-stepper{display:flex;align-items:center;gap:5px}.price-stepper button{width:23px;height:23px;border:1px solid var(--border);border-radius:5px;background:var(--surface-raised);color:var(--text);font-weight:800;cursor:pointer}.price-stepper b{min-width:35px;text-align:center;font-size:10px}.price-line.locked{opacity:.4}
+
+/* Organized management tabs */
+.side-panel{display:block;min-height:420px}
+.panel-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;padding:9px;background:var(--surface);border-bottom:1px solid var(--border)}
+.panel-tab{min-height:34px;padding:0 5px;border:1px solid transparent;border-radius:6px;background:transparent;color:var(--muted);font:inherit;font-size:11px;font-weight:750;cursor:pointer}
+.panel-tab:hover{background:var(--surface-raised);color:var(--text)}
+.panel-tab.active{background:var(--surface-raised);border-color:var(--border);color:var(--accent)}
+.panel-content[hidden]{display:none!important}
+.panel-content{display:block}
+.panel-content section{padding:15px;border-bottom:1px solid var(--border)}
+.panel-content section:last-child{border-bottom:0}
+.upgrade{align-items:flex-start}
+.upgrade span{max-width:145px;line-height:1.4}
+:root[data-theme="light"] .panel-tab.active{background:#d9f3e7;border-color:#b9e4d1;color:#075c43}
+@media(max-width:760px){.side-panel{min-height:0}.panel-content{display:grid;grid-template-columns:1fr 1fr}.panel-content section{border-right:1px solid var(--border)}.panel-content section:nth-child(2){border-right:0}.panel-content#panel-upgrades{grid-template-columns:1fr}}
+@media(max-width:500px){.panel-content{grid-template-columns:1fr}.panel-content section{border-right:0!important}}
