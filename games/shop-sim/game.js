@@ -104,7 +104,7 @@
   }
   function finishShopping(c){
     let bought=0,subtotal=0;
-    c.cart.forEach(item=>{const p=products.find(x=>x.id===item.id),qty=Math.min(item.qty,state.stocks[p.id]||0);if(qty>0){state.stocks[p.id]-=qty;subtotal+=qty*state.prices[p.id];bought+=qty}});
+    c.cart.forEach(item=>{const p=products.find(x=>x.id===item.id),ratio=state.prices[p.id]/p.base,willingness=ratio<=1.08?1:ratio<=1.25?.85:ratio<=1.5?.58:.32,qty=Math.random()<willingness?Math.min(item.qty,state.stocks[p.id]||0):0;if(qty>0){state.stocks[p.id]-=qty;subtotal+=qty*state.prices[p.id];bought+=qty}});
     if(bought){const serviceBonus=state.upgrades.staff*.04;const total=subtotal*(1+serviceBonus);state.cash+=total;state.dayRevenue+=total;state.totalRevenue+=total;state.dayCustomers++;state.totalCustomers++;state.reputation=Math.min(100,state.reputation+.12);addXP(Math.max(2,bought*2));c.spent=total;log("Sale: "+money(total)+" · "+bought+" item"+(bought===1?"":"s")+".")}
     else{state.dayLost++;state.reputation=Math.max(0,state.reputation-.25);log("A shopper left empty-handed.")}
     c.phase="exit";c.tx=990;c.ty=c.y;
@@ -168,7 +168,7 @@
     if(state.open&&!state.paused){
       state.elapsed+=dt;
       if(state.elapsed>=120){endDay()}
-      else{state.nextCustomer-=dt;if(state.nextCustomer<=0){if(state.customers.length<5+state.upgrades.sign*2)spawnCustomer();state.nextCustomer=rand(3.8,6.5)/(1+state.upgrades.sign*.16)}updateCustomers(dt)}
+      else{state.nextCustomer-=dt;if(state.nextCustomer<=0){if(state.customers.length<5+state.upgrades.sign*2)spawnCustomer();state.nextCustomer=rand(3.8,6.5)/(1+state.upgrades.sign*.16)*(1.25-state.reputation/200)}updateCustomers(dt)}
       staffTimer-=dt;
       if(state.upgrades.staff>0&&staffTimer<=0){staffTimer=14;const low=availableProducts().filter(p=>(state.stocks[p.id]||0)<shelfCapacity(p)*.4).sort((a,b)=>(state.stocks[a.id]||0)/shelfCapacity(a)-(state.stocks[b.id]||0)/shelfCapacity(b));low.slice(0,state.upgrades.staff).forEach(p=>{const amount=Math.min(4*state.upgrades.staff,shelfCapacity(p)-(state.stocks[p.id]||0));const cost=amount*p.cost;if(amount>0&&state.cash>=cost){state.cash-=cost;state.stocks[p.id]=(state.stocks[p.id]||0)+amount;log("Staff restocked "+p.name.toLowerCase()+".")}});renderProducts();renderUpgrades()}
       const second=Math.floor(state.elapsed);if(second!==lastStatsSecond){lastStatsSecond=second;renderStats()}
