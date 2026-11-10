@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#08090b">
   <title>Games — taravo</title>
   <link rel="stylesheet" href="../home/style.css">
-  <script src="../home/app.js" defer></script>
+  <link rel="stylesheet" href="stackrush/game.css">
 </head>
-<body data-page="games">
+<body data-page="games" class="game-page">
   <aside class="sidebar">
     <a class="brand" href="../home/" aria-label="taravo home">taravo</a>
     <nav class="navigation" aria-label="Main navigation">
@@ -19,11 +19,21 @@
     <div class="sidebar-bottom"><span class="sidebar-caption">fun games</span></div>
   </aside>
   <main class="main-content">
-    <header class="page-header">
-      <div><h1>Games</h1></div>
-      <label class="search-wrap"><span aria-hidden="true">⌕</span><input class="game-search" type="search" placeholder="Search games..." aria-label="Search games"></label>
-    </header>
-    <section class="content-section"><div id="game-grid" class="game-grid"></div></section>
+    <header class="page-header game-page-header"><div><h1>Games</h1></div></header>
+    <section class="stackrush-shell" aria-label="Stack Rush game">
+      <div class="stackrush-top">
+        <div class="stackrush-score"><span>SCORE</span><strong id="score">0</strong></div>
+        <div class="stackrush-best"><span>BEST</span><strong id="best">0</strong></div>
+      </div>
+      <canvas id="stackrush" width="1100" height="720" aria-label="Stack Rush game"></canvas>
+      <div class="stackrush-overlay" id="overlay">
+        <div class="stackrush-start">
+          <h2 id="overlay-title">Stack Rush</h2>
+          <button id="start-button" type="button">Play</button>
+        </div>
+      </div>
+    </section>
   </main>
+  <script src="stackrush/game.js"></script>
 </body>
 </html>
