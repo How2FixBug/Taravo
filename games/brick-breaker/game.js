@@ -1,12 +1,16 @@
 (() => {
   const canvas=document.getElementById("brick-breaker"),ctx=canvas.getContext("2d");
   const scoreEl=document.getElementById("score"),bestEl=document.getElementById("best"),levelEl=document.getElementById("level");
-  const overlay=document.getElementById("overlay"),titleEl=document.getElementById("overlay-title"),button=document.getElementById("start-button"),secondaryButton=document.getElementById("secondary-button"),menuButton=document.getElementById("menu-button"),fullscreenButton=document.getElementById("fullscreen-button");
+  const overlay=document.getElementById("overlay"),titleEl=document.getElementById("overlay-title"),button=document.getElementById("start-button"),secondaryButton=document.getElementById("secondary-button"),menuButton=document.getElementById("menu-button"),fullscreenButton=document.getElementById("fullscreen-button"),settingsButton=document.getElementById("settings-button"),settingsPopup=document.getElementById("game-settings"),closeSettings=document.getElementById("close-game-settings"),particlesInput=document.getElementById("particles"),sensitivityInput=document.getElementById("sensitivity"),sensitivityValue=document.getElementById("sensitivity-value");
   const W=1100,H=720,colors=["#ff5364","#ff9f32","#ffd447","#6bd65c","#25c7a8","#36a9ff","#8165ef","#e65ac1"];
   let score=0,best=Number(localStorage.getItem("taravo-breaker-best")||0),level=1,lives=3,bricks=[],particles=[],ball=null,paddle=null,running=false,paused=false,last=0,keys={};
   let pointerX=W/2,trail=[];
   let gamePrefs={particles:true,sensitivity:100};
-  try{gamePrefs={...gamePrefs,...JSON.parse(localStorage.getItem("taravo-settings")||"{}")}}catch{}
+  try{gamePrefs={...gamePrefs,...JSON.parse(localStorage.getItem("taravo-brick-breaker-settings")||localStorage.getItem("taravo-settings")||"{}")}}catch{}
+  particlesInput.checked=gamePrefs.particles!==false;sensitivityInput.value=gamePrefs.sensitivity;sensitivityValue.textContent=gamePrefs.sensitivity+"%";
+  function saveGamePrefs(){localStorage.setItem("taravo-brick-breaker-settings",JSON.stringify(gamePrefs))}
+  function openGameSettings(){settingsPopup.classList.remove("hidden");settingsPopup.setAttribute("aria-hidden","false")}
+  function closeGameSettings(){settingsPopup.classList.add("hidden");settingsPopup.setAttribute("aria-hidden","true")}
   bestEl.textContent=best;
   const rand=a=>a[Math.floor(Math.random()*a.length)];
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
@@ -80,11 +84,15 @@
   function setPointer(e){const r=canvas.getBoundingClientRect();pointerX=(e.clientX-r.left)/r.width*W}
   canvas.addEventListener("pointermove",setPointer);
   canvas.addEventListener("pointerdown",e=>{setPointer(e);if(!running)start()});
+  settingsButton.addEventListener("click",openGameSettings);closeSettings.addEventListener("click",closeGameSettings);settingsPopup.addEventListener("click",e=>{if(e.target===settingsPopup)closeGameSettings()});
+  particlesInput.addEventListener("change",()=>{gamePrefs.particles=particlesInput.checked;saveGamePrefs()});
+  sensitivityInput.addEventListener("input",()=>{gamePrefs.sensitivity=Number(sensitivityInput.value);sensitivityValue.textContent=gamePrefs.sensitivity+"%";saveGamePrefs()});
+  document.getElementById("reset-best").addEventListener("click",()=>{best=0;bestEl.textContent="0";localStorage.removeItem("taravo-breaker-best")});
   button.addEventListener("click",()=>{if(paused&&titleEl.textContent!=="Game over"&&button.textContent==="Resume"){running=true;paused=false;last=0;overlay.classList.add("hidden");requestAnimationFrame(loop)}else start()});
   secondaryButton.addEventListener("click",()=>{if(secondaryButton.dataset.action==="restart")start();else toggleFullscreen()});
   menuButton.addEventListener("click",()=>{if(running)showMenu("pause");else showMenu("menu")});
   fullscreenButton.addEventListener("click",toggleFullscreen);
-  document.addEventListener("keydown",e=>{if(["ArrowLeft","ArrowRight","Space"].includes(e.code))e.preventDefault();keys[e.code]=true;if(e.code==="Escape"&&running)showMenu("pause");else if(e.code==="Space"&&!running){if(paused&&titleEl.textContent!=="Game over"){running=true;paused=false;last=0;overlay.classList.add("hidden");requestAnimationFrame(loop)}else start()}});
+  document.addEventListener("keydown",e=>{if(["ArrowLeft","ArrowRight","Space"].includes(e.code))e.preventDefault();keys[e.code]=true;if(e.code==="Escape"&&!settingsPopup.classList.contains("hidden"))closeGameSettings();else if(e.code==="Escape"&&running)showMenu("pause");else if(e.code==="Space"&&!running){if(paused&&titleEl.textContent!=="Game over"){running=true;paused=false;last=0;overlay.classList.add("hidden");requestAnimationFrame(loop)}else start()}});
   document.addEventListener("keyup",e=>{keys[e.code]=false});
   makeBricks();resetBall();draw();
 })();
