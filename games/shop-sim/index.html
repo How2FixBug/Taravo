@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#08090b">
+  <title>Shop Sim — taravo</title>
+  <link rel="stylesheet" href="../../home/style.css">
+  <link rel="stylesheet" href="game.css">
+  <script src="../../home/global-settings.js" defer></script>
+</head>
+<body class="game-page shop-page">
+  <aside class="sidebar">
+    <a class="brand" href="../../home/" aria-label="taravo home">taravo</a>
+    <nav class="navigation" aria-label="Main navigation">
+      <a class="nav-link" href="../../home/"><span class="nav-icon">⌂</span>Home</a>
+      <a class="nav-link active" href="../"><span class="nav-icon">▦</span>Games</a>
+      <a class="nav-link" href="../../favorites/"><span class="nav-icon">☆</span>Favorites</a>
+      <a class="nav-link" href="../../settings/"><span class="nav-icon">⚙</span>Settings</a>
+    </nav>
+    <div class="sidebar-bottom"><span class="sidebar-caption">fun games</span></div>
+  </aside>
+  <main class="main-content shop-main">
+    <header class="shop-header">
+      <div class="shop-heading"><a class="back-link" href="../" aria-label="Back to games">←</a><div><h1>Corner Market</h1><p id="store-level">Level 1 · New business</p></div></div>
+      <div class="shop-header-actions"><div class="day-chip"><span>DAY</span><strong id="day-number">1</strong></div><button id="pause-button" class="shop-icon-button" type="button" aria-label="Pause simulation">Ⅱ</button><button id="fullscreen-button" class="shop-small-button" type="button">⛶ <span>Fullscreen</span></button></div>
+    </header>
+    <section class="shop-stats" aria-label="Store finances">
+      <div><span>Cash</span><strong id="cash-value">$350</strong></div>
+      <div><span>Today</span><strong id="today-value">$0</strong></div>
+      <div><span>Customers</span><strong id="customer-value">0</strong></div>
+      <div><span>Reputation</span><strong id="reputation-value">50</strong></div>
+      <div class="day-progress"><div><span>STORE HOURS</span><strong id="clock-value">8:00 AM</strong></div><div class="progress-track"><i id="day-progress"></i></div></div>
+    </section>
+    <div class="shop-layout">
+      <section class="store-panel">
+        <div class="store-panel-top"><div><span class="panel-kicker">YOUR STORE</span><strong>Floor view</strong></div><span class="open-status" id="open-status"><i></i> OPEN</span></div>
+        <div class="store-stage"><canvas id="store-canvas" width="960" height="560" aria-label="Live view of your shop, shelves and customers"></canvas><div class="canvas-label">CORNER MARKET <span>EST. DAY 1</span></div></div>
+        <div class="store-footer"><span><i class="legend-dot shelf-dot"></i> Shelves</span><span><i class="legend-dot customer-dot"></i> Customers</span><span><i class="legend-dot checkout-dot"></i> Checkout</span><span id="visitor-message">Your first customers are on their way.</span></div>
+      </section>
+      <aside class="management-panel">
+        <div class="management-tabs" role="tablist" aria-label="Management sections">
+          <button class="management-tab active" data-tab="stock" type="button">Stock</button>
+          <button class="management-tab" data-tab="business" type="button">Business</button>
+        </div>
+        <section id="stock-tab" class="management-content">
+          <div class="panel-title-row"><div><span class="panel-kicker">INVENTORY</span><h2>Products</h2></div><span class="tiny-count" id="shelf-count">4 shelves</span></div>
+          <div id="product-list" class="product-list"></div>
+          <button id="restock-all" class="wide-action" type="button">Restock all shelves <span>↗</span></button>
+        </section>
+        <section id="business-tab" class="management-content hidden">
+          <div class="panel-title-row"><div><span class="panel-kicker">GROW YOUR STORE</span><h2>Business</h2></div></div>
+          <div class="upgrade-list" id="upgrade-list"></div>
+          <div class="business-summary"><span>Daily rent</span><strong id="rent-value">$35</strong><span>Staff wages</span><strong id="wages-value">$0</strong></div>
+        </section>
+      </aside>
+    </div>
+    <section class="bottom-bar"><div><span class="panel-kicker">STORE ACTIVITY</span><div id="activity-feed" aria-live="polite"><p>Your shop is ready. Open for business!</p></div></div><button id="close-day" class="close-day-button" type="button">Close day <span>→</span></button></section>
+    <div class="day-report hidden" id="day-report" role="dialog" aria-modal="true" aria-labelledby="report-title"><div class="report-card"><span class="panel-kicker">END OF DAY</span><h2 id="report-title">Day complete</h2><div id="report-content"></div><button id="next-day" class="wide-action" type="button">Open tomorrow <span>→</span></button></div></div>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>
