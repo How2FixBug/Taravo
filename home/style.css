@@ -203,3 +203,4 @@ h1 { margin: 0; font-size: clamp(2rem, 4vw, 2.8rem); letter-spacing: -.055em; }
 :root[data-theme="light"] .game-card{transition:border-color .15s ease,background .15s ease}
 :root[data-theme="light"] .game-card:hover{border-color:#9acfb5}
 :root[data-theme="light"] .search-wrap:focus-within{border-color:#087a59;box-shadow:0 0 0 3px #087a5918}
+.game-card[data-game="shop-sim"] .game-art{background:#f0eee5 url("../games/shop-sim/thumbnail.svg") center/cover no-repeat}
