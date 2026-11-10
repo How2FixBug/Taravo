@@ -60,7 +60,7 @@
     const p=products.find(x=>x.id===id),current=state.stocks[id]||0,amount=Math.min(quantity,shelfCapacity(p)-current);
     if(amount<=0){log(p.name+" shelf is already full.");return}
     const cost=amount*p.cost;if(state.cash<cost){log("Not enough cash to order "+p.name+".");return}
-    state.cash-=cost;state.stocks[id]=current+amount;log("Restocked "+amount+" "+p.name.toLowerCase()+".");renderStats();renderProducts();save();
+    state.cash-=cost;state.stocks[id]=current+amount;log("Restocked "+amount+" "+p.name.toLowerCase()+".");renderStats();renderProducts();renderUpgrades();save();
   }
   function renderUpgrades(){
     const root=$("upgrade-list");root.replaceChildren();
@@ -160,7 +160,7 @@
     $("day-report").classList.remove("hidden");$("open-status").innerHTML="<i></i> CLOSED";renderStats();save();
   }
   function nextDay(){
-    state.day++;state.dayRevenue=0;state.dayCustomers=0;state.dayLost=0;state.elapsed=0;state.open=true;state.paused=false;state.customers=[];state.nextCustomer=2;
+    state.day++;state.dayRevenue=0;state.dayCustomers=0;state.dayLost=0;state.elapsed=0;state.open=true;state.paused=false;state.customers=[];state.nextCustomer=2;lastStatsSecond=-1;
     $("day-report").classList.add("hidden");log("Day "+state.day+" is open. Let's make it count.");renderStats();save();
   }
   function frame(now){
