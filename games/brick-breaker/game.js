@@ -24,7 +24,7 @@
   }
   function resetBall(){trail=[];ball={x:W/2,y:H-145,r:10,vx:(Math.random()>.5?1:-1)*245,vy:-360};paddle={x:W/2-66,y:H-78,w:132,h:15,speed:780}}
   function start(){score=0;level=1;lives=3;particles=[];scoreEl.textContent=score;levelEl.textContent=level;makeBricks();resetBall();running=true;paused=false;last=0;overlay.classList.add("hidden");requestAnimationFrame(loop)}
-  function showMenu(mode="menu"){running=false;paused=true;overlay.classList.remove("hidden");titleEl.textContent=mode==="gameover"?"Game over":"Brick Breaker";button.textContent=mode==="gameover"?"Play again":mode==="pause"?"Resume":"Play";secondaryButton.textContent=mode==="pause"?"Restart":"Fullscreen";secondaryButton.dataset.action=mode==="pause"?"restart":"fullscreen"}
+  function showMenu(mode="menu"){running=false;paused=true;overlay.classList.remove("hidden");titleEl.textContent=mode==="gameover"?"Game over":"Brick Breaker";button.textContent=mode==="gameover"?"Play again":mode==="pause"?"Resume":"Play";secondaryButton.hidden=mode!=="pause";secondaryButton.textContent="Restart";secondaryButton.dataset.action="restart"}
   function toggleFullscreen(){if(!document.fullscreenElement){const target=document.querySelector(".arcade-shell");if(target.requestFullscreen)target.requestFullscreen().catch(()=>{})}else if(document.exitFullscreen)document.exitFullscreen()}
   function pauseGame(){if(running){running=false;showMenu("pause")}else if(paused&&titleEl.textContent!=="Game over"){running=true;paused=false;last=0;overlay.classList.add("hidden");requestAnimationFrame(loop)}}
   function burst(x,y,color,n=12){if(gamePrefs.particles===false)return;for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,s=70+Math.random()*260;particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,size:2+Math.random()*5,life:.35+Math.random()*.6,max:1,color,spin:(Math.random()-.5)*9,rot:Math.random()*6})}}
@@ -89,7 +89,7 @@
   sensitivityInput.addEventListener("input",()=>{gamePrefs.sensitivity=Number(sensitivityInput.value);sensitivityValue.textContent=gamePrefs.sensitivity+"%";saveGamePrefs()});
   document.getElementById("reset-best").addEventListener("click",()=>{best=0;bestEl.textContent="0";localStorage.removeItem("taravo-breaker-best")});
   button.addEventListener("click",()=>{if(paused&&titleEl.textContent!=="Game over"&&button.textContent==="Resume"){running=true;paused=false;last=0;overlay.classList.add("hidden");requestAnimationFrame(loop)}else start()});
-  secondaryButton.addEventListener("click",()=>{if(secondaryButton.dataset.action==="restart")start();else toggleFullscreen()});
+  secondaryButton.addEventListener("click",start);
   menuButton.addEventListener("click",()=>{if(running)showMenu("pause");else showMenu("menu")});
   fullscreenButton.addEventListener("click",toggleFullscreen);
   document.addEventListener("keydown",e=>{if(["ArrowLeft","ArrowRight","Space"].includes(e.code))e.preventDefault();keys[e.code]=true;if(e.code==="Escape"&&!settingsPopup.classList.contains("hidden"))closeGameSettings();else if(e.code==="Escape"&&running)showMenu("pause");else if(e.code==="Space"&&!running){if(paused&&titleEl.textContent!=="Game over"){running=true;paused=false;last=0;overlay.classList.add("hidden");requestAnimationFrame(loop)}else start()}});
