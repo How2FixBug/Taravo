@@ -77,16 +77,10 @@ function getRecommendedGames(favorites) {
 }
 
 function renderHome(search, favorites) {
-  const featuredSlot = document.getElementById("featured-game");
   const recommendedGrid = document.getElementById("recommended-grid");
-  if (!featuredSlot || !recommendedGrid) return;
+  if (!recommendedGrid) return;
   const query = search.trim().toLowerCase();
-  const featured = GAMES.find(game => game.id === FEATURED_GAME_ID);
-  featuredSlot.replaceChildren();
   recommendedGrid.replaceChildren();
-  if (featured && (!query || [featured.title, featured.description, ...featured.tags].join(" ").toLowerCase().includes(query))) {
-    featuredSlot.append(createGameCard(featured, favorites, true));
-  }
   const recommended = getRecommendedGames(favorites).filter(game =>
     !query || [game.title, game.description, ...game.tags].join(" ").toLowerCase().includes(query)
   );
@@ -95,14 +89,8 @@ function renderHome(search, favorites) {
   } else {
     const empty = document.createElement("p");
     empty.className = "subtle-empty";
-    empty.textContent = "No recommended games match that search.";
-    recommendedGrid.append(empty);
-  }
-  if (!featuredSlot.childElementCount && !recommended.length) {
-    const empty = document.createElement("p");
-    empty.className = "subtle-empty";
     empty.textContent = "No games match that search.";
-    featuredSlot.append(empty);
+    recommendedGrid.append(empty);
   }
 }
 
