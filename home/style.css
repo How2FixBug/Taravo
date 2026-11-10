@@ -181,12 +181,12 @@ h1 { margin: 0; font-size: clamp(2rem, 4vw, 2.8rem); letter-spacing: -.055em; }
 
 .game-card[data-game="brick-breaker"] .game-art{background:#fff url("../games/brick-breaker/thumbnail.svg") center/cover no-repeat}
 
-:root[data-theme="light"]{color-scheme:light;--background:#f3f5f7;--surface:#fff;--surface-raised:#e9edf1;--text:#171b20;--muted:#68727e;--border:#d9dfe5}
+:root[data-theme="light"]{color-scheme:light;--background:#eef1f5;--surface:#ffffff;--surface-raised:#e3e8ee;--text:#111820;--muted:#4d5967;--accent:#087a59;--border:#c5ced8}
 :root[data-theme="light"] body{background:var(--background);color:var(--text)}
-:root[data-theme="light"] .sidebar{background:#fff}
-:root[data-theme="light"] .nav-link:hover{background:#f0f2f5}
-:root[data-theme="light"] .nav-link.active{background:color-mix(in srgb,var(--accent) 14%,white)}
-:root[data-theme="light"] .empty-state{background:#fff}
+:root[data-theme="light"] .sidebar{background:#ffffff;border-right-color:#c5ced8}
+:root[data-theme="light"] .nav-link{color:#465260}\n:root[data-theme="light"] .nav-link:hover{background:#e8edf2;color:#111820}
+:root[data-theme="light"] .nav-link.active{background:#d8eee6;color:#075c43}
+:root[data-theme="light"] .empty-state{background:#ffffff;border-color:#aeb9c5}\n:root[data-theme="light"] .sidebar-caption{color:#596575}\n:root[data-theme="light"] .play-link{background:#087a59;color:#ffffff}\n:root[data-theme="light"] .favorite-button{color:#075c43;background:#e3e8ee;border-color:#c5ced8}\n:root[data-theme="light"] .search-wrap{border-color:#b9c4cf}\n:root[data-theme="light"] .game-card{border-color:#c5ced8}\n:root[data-theme="light"] .game-details p, :root[data-theme="light"] .subtle-empty{color:#4d5967}
 :root[data-accent="blue"]{--accent:#62b8ff}
 :root[data-accent="purple"]{--accent:#b69aff}
 :root[data-accent="orange"]{--accent:#ffad66}
