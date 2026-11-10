@@ -1,0 +1,12 @@
+{
+  "id": "banana-clicker",
+  "name": "Banana Clicker",
+  "description": "Click bananas, buy upgrades, and build your banana empire.",
+  "tags": [
+    "clicker",
+    "idle",
+    "upgrade",
+    "casual"
+  ],
+  "thumbnail": "thumbnail.png"
+}
