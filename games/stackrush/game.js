@@ -8,7 +8,7 @@
   bestNode.textContent=best;
   const pick=()=>colors[Math.floor(Math.random()*colors.length)];
   const shade=(hex,k)=>{const n=parseInt(hex.slice(1),16),r=Math.min(255,Math.max(0,((n>>16)*k)|0)),g=Math.min(255,Math.max(0,(((n>>8)&255)*k)|0)),b=Math.min(255,Math.max(0,((n&255)*k)|0));return "rgb("+r+","+g+","+b+")"};
-  function project(x,y,z){const a=angle*Math.PI/2,rx=x*Math.cos(a)-z*Math.sin(a),rz=x*Math.sin(a)+z*Math.cos(a);return {x:W/2+rx*.86+rz*.86,y:545+(rx+rz)*.43-y*BLOCK_H};}
+  function project(x,y,z){const a=angle*Math.PI/2,rx=x*Math.cos(a)-z*Math.sin(a),rz=x*Math.sin(a)+z*Math.cos(a);return {x:W/2+(rx-rz)*.86,y:545+(rx+rz)*.43-y*BLOCK_H};}
   function face(points,color){ctx.beginPath();ctx.moveTo(points[0].x,points[0].y);for(let i=1;i<points.length;i++)ctx.lineTo(points[i].x,points[i].y);ctx.closePath();ctx.fillStyle=color;ctx.fill();ctx.strokeStyle="#17231b20";ctx.lineWidth=1;ctx.stroke();}
   function cube(x,y,z,color){const s=CELL,h=BLOCK_H,p=[project(x,y,z),project(x+s,y,z),project(x+s,y,z+s),project(x,y,z+s)],top=p.map(v=>({x:v.x,y:v.y-h}));face([p[0],p[1],top[1],top[0]],shade(color,.76));face([p[1],p[2],top[2],top[1]],shade(color,.55));face(top,shade(color,1.12));}
   function newLayer(){return Array.from({length:N},()=>Array(N).fill(null))}
