@@ -1,0 +1,12 @@
+{
+  "id": "stackrush",
+  "name": "Stack Rush",
+  "description": "Line up the blocks. Keep the tower going.",
+  "tags": [
+    "arcade",
+    "skill",
+    "timing",
+    "quick-play"
+  ],
+  "thumbnail": "thumbnail.svg"
+}
