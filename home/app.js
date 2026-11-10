@@ -13,14 +13,17 @@ async function loadGames() {
     const result = await fetch(new URL(`games/library/${id}/game.json`, TARAVO_ROOT));
     if (!result.ok) return null;
     const game = await result.json();
-    if (game.id !== id || !game.name || !game.description || !Array.isArray(game.tags)) return null;
+    if (game.id !== id || !game.name || !game.description || !Array.isArray(game.tags) || !game.thumbnail) return null;
     return { ...game, title: game.name, path: `games/play.html?game=${encodeURIComponent(id)}`,
-      thumbnailUrl: new URL(`games/library/${id}/${game.thumbnail || "thumbnail.svg"}`, TARAVO_ROOT).href };
+      thumbnailUrl: new URL(`games/library/${id}/${game.thumbnail}`, TARAVO_ROOT).href };
   }));
   GAMES = entries.filter(Boolean);
 }
 function getFavorites() {
-  try { return JSON.parse(localStorage.getItem(FAVORITES_KEY) || "[]"); } catch { return []; }
+  try {
+    const saved = JSON.parse(localStorage.getItem(FAVORITES_KEY) || "[]");
+    return saved.map(id => id === "stackrush" ? "stack-rush" : id);
+  } catch { return []; }
 }
 function saveFavorites(ids) { localStorage.setItem(FAVORITES_KEY, JSON.stringify(ids)); }
 function createGameCard(game, favorites, featured = false) {
