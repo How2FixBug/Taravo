@@ -186,9 +186,11 @@ h1 { margin: 0; font-size: clamp(2rem, 4vw, 2.8rem); letter-spacing: -.055em; }
 :root[data-theme="light"] .sidebar{background:#ffffff;border-right-color:#c5ced8}
 :root[data-theme="light"] .nav-link{color:#465260}\n:root[data-theme="light"] .nav-link:hover{background:#e8edf2;color:#111820}
 :root[data-theme="light"] .nav-link.active{background:#d8eee6;color:#075c43}
-:root[data-theme="light"] .empty-state{background:#ffffff;border-color:#aeb9c5}\n:root[data-theme="light"] .sidebar-caption{color:#596575}\n:root[data-theme="light"] .play-link{background:#087a59;color:#ffffff}\n:root[data-theme="light"] .favorite-button{color:#075c43;background:#e3e8ee;border-color:#c5ced8}\n:root[data-theme="light"] .search-wrap{border-color:#b9c4cf}\n:root[data-theme="light"] .game-card{border-color:#c5ced8}\n:root[data-theme="light"] .game-details p, :root[data-theme="light"] .subtle-empty{color:#4d5967}
+:root[data-theme="light"] .empty-state{background:#ffffff;border-color:#aeb9c5}\n:root[data-theme="light"] .sidebar-caption{color:#596575}\n:root[data-theme="light"] .play-link{background:#d9f3e7;color:#075c43;border:1px solid #b9e4d1}\n:root[data-theme="light"] .play-link:hover{background:#c5ecd9;border-color:#91d4b6;color:#064b37}\n:root[data-theme="light"] .favorite-button{color:#087a59;background:#f4f8f6;border-color:#cbd9d1}\n:root[data-theme="light"] .favorite-button:hover{color:#075c43;background:#d9f3e7;border-color:#a9ddc3}\n:root[data-theme="light"] .search-wrap{border-color:#b9c4cf}\n:root[data-theme="light"] .game-card{border-color:#c5ced8}\n:root[data-theme="light"] .game-details p, :root[data-theme="light"] .subtle-empty{color:#4d5967}
 :root[data-accent="blue"]{--accent:#62b8ff}
 :root[data-accent="purple"]{--accent:#b69aff}
 :root[data-accent="orange"]{--accent:#ffad66}
 :root[data-accent="mint"]{--accent:#62e6b5}
 .reduce-motion *, .reduce-motion *:before, .reduce-motion *:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+
+:root[data-theme="light"] .game-card{transition:border-color .15s ease,background .15s ease}\n:root[data-theme="light"] .game-card:hover{border-color:#9acfb5}\n:root[data-theme="light"] .search-wrap:focus-within{border-color:#087a59;box-shadow:0 0 0 3px #087a5918}
