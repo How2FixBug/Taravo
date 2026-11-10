@@ -1,5 +1,5 @@
 const GAMES = [
-  { id: "stackrush", title: "Stackrush", description: "A colorful 3D stacking game.", path: "games/stackrush/" }
+  { id: "brick-breaker", title: "Brick Breaker", description: "Bounce, break, and clear the board.", path: "games/" }
 ];
 const FAVORITES_KEY = "taravo-favorites";
 const appScript = document.querySelector('script[src$="app.js"]');
