@@ -72,8 +72,7 @@
     }
     if(ball){
       trail.forEach((point,i)=>{const t=(i+1)/trail.length;ctx.beginPath();ctx.arc(point.x,point.y,ball.r*t*.72,0,Math.PI*2);ctx.fillStyle="rgba(98,230,181,"+(t*.16)+")";ctx.fill()});
-      ctx.save();ctx.shadowColor="#62e6b5aa";ctx.shadowBlur=18;ctx.beginPath();ctx.arc(ball.x,ball.y,ball.r,0,Math.PI*2);ctx.fillStyle="#26332b";ctx.fill();ctx.restore();
-      ctx.beginPath();ctx.arc(ball.x-3,ball.y-3,3,0,Math.PI*2);ctx.fillStyle="#fff";ctx.fill();
+      ctx.save();ctx.shadowColor="#62e6b5aa";ctx.shadowBlur=18;ctx.beginPath();ctx.arc(ball.x,ball.y,ball.r,0,Math.PI*2);const orb=ctx.createRadialGradient(ball.x-ball.r*.3,ball.y-ball.r*.35,ball.r*.08,ball.x,ball.y,ball.r);orb.addColorStop(0,"#ffffff");orb.addColorStop(.35,"#ffffff");orb.addColorStop(.72,"#d8fff1");orb.addColorStop(1,"#62e6b5");ctx.fillStyle=orb;ctx.fill();ctx.lineWidth=2;ctx.strokeStyle="#62e6b5";ctx.stroke();ctx.restore();
     }
     particles.forEach(p=>{ctx.save();ctx.globalAlpha=clamp(p.life/p.max,0,1);ctx.translate(p.x,p.y);ctx.rotate(p.rot);ctx.fillStyle=p.color;ctx.fillRect(-p.size/2,-p.size/2,p.size,p.size);ctx.restore()});
     // lives are small circles in the lower corner
