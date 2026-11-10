@@ -1,7 +1,7 @@
 (() => {
   const canvas=document.getElementById("brick-breaker"),ctx=canvas.getContext("2d");
   const scoreEl=document.getElementById("score"),bestEl=document.getElementById("best"),levelEl=document.getElementById("level");
-  const overlay=document.getElementById("overlay"),titleEl=document.getElementById("overlay-title"),copyEl=document.getElementById("overlay-copy"),button=document.getElementById("start-button");
+  const overlay=document.getElementById("overlay"),titleEl=document.getElementById("overlay-title"),button=document.getElementById("start-button"),secondaryButton=document.getElementById("secondary-button"),menuButton=document.getElementById("menu-button"),fullscreenButton=document.getElementById("fullscreen-button");
   const W=1100,H=720,colors=["#ff5364","#ff9f32","#ffd447","#6bd65c","#25c7a8","#36a9ff","#8165ef","#e65ac1"];
   let score=0,best=Number(localStorage.getItem("taravo-breaker-best")||0),level=1,lives=3,bricks=[],particles=[],ball=null,paddle=null,running=false,paused=false,last=0,keys={};
   let pointerX=W/2,trail=[];
@@ -20,6 +20,9 @@
   }
   function resetBall(){trail=[];ball={x:W/2,y:H-145,r:10,vx:(Math.random()>.5?1:-1)*245,vy:-360};paddle={x:W/2-66,y:H-78,w:132,h:15,speed:780}}
   function start(){score=0;level=1;lives=3;particles=[];scoreEl.textContent=score;levelEl.textContent=level;makeBricks();resetBall();running=true;paused=false;last=0;overlay.classList.add("hidden");requestAnimationFrame(loop)}
+  function showMenu(mode="menu"){running=false;paused=true;overlay.classList.remove("hidden");titleEl.textContent=mode==="gameover"?"Game over":"Brick Breaker";button.textContent=mode==="gameover"?"Play again":mode==="pause"?"Resume":"Play";secondaryButton.textContent=mode==="pause"?"Restart":"Fullscreen";secondaryButton.dataset.action=mode==="pause"?"restart":"fullscreen"}
+  function toggleFullscreen(){if(!document.fullscreenElement){const target=document.querySelector(".arcade-shell");if(target.requestFullscreen)target.requestFullscreen().catch(()=>{})}else if(document.exitFullscreen)document.exitFullscreen()}
+  function pauseGame(){if(running){running=false;showMenu("pause")}else if(paused&&titleEl.textContent!=="Game over"){running=true;paused=false;last=0;overlay.classList.add("hidden");requestAnimationFrame(loop)}}
   function burst(x,y,color,n=12){if(gamePrefs.particles===false)return;for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,s=70+Math.random()*260;particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,size:2+Math.random()*5,life:.35+Math.random()*.6,max:1,color,spin:(Math.random()-.5)*9,rot:Math.random()*6})}}
   function addScore(n){score+=n;scoreEl.textContent=score;if(score>best){best=score;bestEl.textContent=best;localStorage.setItem("taravo-breaker-best",String(best))}}
   function hitBrick(b){b.alive=false;burst(b.x+b.w/2,b.y+b.h/2,b.color,18);addScore(10*level);ball.vy*=-1;if(bricks.every(v=>!v.alive)){level++;levelEl.textContent=level;makeBricks();ball.vx*=1.07;ball.vy*=1.07;burst(W/2,340,rand(colors),65)}}
@@ -73,12 +76,15 @@
     for(let i=0;i<lives;i++){ctx.beginPath();ctx.arc(W-36-i*23,H-34,6,0,Math.PI*2);ctx.fillStyle="#62e6b5";ctx.fill()}
   }
   function loop(t){if(!running)return;const dt=Math.min((t-last)/1000||0,.025);last=t;update(dt);draw();if(running)requestAnimationFrame(loop)}
-  function endGame(){running=false;titleEl.textContent="Game over";copyEl.textContent="Score: "+score+" · Level: "+level;button.textContent="Play again";overlay.classList.remove("hidden")}
+  function endGame(){showMenu("gameover")}
   function setPointer(e){const r=canvas.getBoundingClientRect();pointerX=(e.clientX-r.left)/r.width*W}
   canvas.addEventListener("pointermove",setPointer);
   canvas.addEventListener("pointerdown",e=>{setPointer(e);if(!running)start()});
-  button.addEventListener("click",start);
-  document.addEventListener("keydown",e=>{if(["ArrowLeft","ArrowRight","Space"].includes(e.code))e.preventDefault();keys[e.code]=true;if(e.code==="Space"&&!running)start()});
+  button.addEventListener("click",()=>{if(paused&&titleEl.textContent!=="Game over"&&button.textContent==="Resume"){running=true;paused=false;last=0;overlay.classList.add("hidden");requestAnimationFrame(loop)}else start()});
+  secondaryButton.addEventListener("click",()=>{if(secondaryButton.dataset.action==="restart")start();else toggleFullscreen()});
+  menuButton.addEventListener("click",()=>{if(running)showMenu("pause");else showMenu("menu")});
+  fullscreenButton.addEventListener("click",toggleFullscreen);
+  document.addEventListener("keydown",e=>{if(["ArrowLeft","ArrowRight","Space"].includes(e.code))e.preventDefault();keys[e.code]=true;if(e.code==="Escape"&&running)showMenu("pause");else if(e.code==="Space"&&!running){if(paused&&titleEl.textContent!=="Game over"){running=true;paused=false;last=0;overlay.classList.add("hidden");requestAnimationFrame(loop)}else start()}});
   document.addEventListener("keyup",e=>{keys[e.code]=false});
   makeBricks();resetBall();draw();
 })();
