@@ -3,46 +3,58 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#d9e1d7">
-  <title>Stackrush — Taravo</title>
+  <meta name="theme-color" content="#ffffff">
+  <title>Stackrush — taravo</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <main class="game-shell">
-    <header class="topbar">
-      <a class="back-link" href="../../games/">← All games</a>
-      <div class="wordmark">TARAVO <span>/ ARCADE</span></div>
-      <div class="best">BEST <strong id="best">0</strong></div>
+<body data-page="game">
+  <aside class="sidebar">
+    <a class="brand" href="../../home/" aria-label="taravo home">taravo</a>
+    <nav class="navigation" aria-label="Main navigation">
+      <a class="nav-link" href="../../home/"><span class="nav-icon">⌂</span>Home</a>
+      <a class="nav-link active" href="../"><span class="nav-icon">▦</span>Games</a>
+      <a class="nav-link" href="../../favorites/"><span class="nav-icon">☆</span>Favorites</a>
+    </nav>
+    <div class="sidebar-bottom"><span class="sidebar-caption">taravo</span></div>
+  </aside>
+
+  <main class="main-content">
+    <header class="page-header">
+      <div class="game-heading">
+        <a class="back-link" href="../">← Games</a>
+        <h1>Stackrush</h1>
+      </div>
+      <div class="game-best">BEST <strong id="best">0</strong></div>
     </header>
 
-    <section class="game-layout">
-      <div class="intro">
-        <p class="eyebrow">HARBOR SHIFT NO. 01</p>
-        <h1>Stackrush<span>.</span></h1>
-        <p class="description">One more crate. One more shift. How high can you build?</p>
-      </div>
-
-      <div class="game-frame">
-        <div class="hud">
-          <div><small>CRATES PLACED</small><strong id="score">0</strong></div>
-          <div class="hud-right"><small>PERFECT DROPS</small><strong id="perfect">0</strong></div>
-        </div>
-        <canvas id="game" width="900" height="560" aria-label="Stackrush stacking game"></canvas>
-        <div class="overlay" id="overlay">
-          <div class="overlay-card">
-            <p class="eyebrow" id="overlay-kicker">THE DOCK IS OPEN</p>
-            <h2 id="overlay-title">Build something<br>that lasts.</h2>
-            <p id="overlay-copy">Drop each passing crate onto the stack. Keep the edges lined up.</p>
-            <button id="start">Start stacking <span>→</span></button>
-            <small class="controls-note">CLICK OR PRESS SPACE TO DROP</small>
+    <div class="game-columns">
+      <section class="play-column">
+        <div class="game-stage">
+          <div class="game-hud">
+            <div><span>STACK</span><strong id="score">0</strong></div>
+            <div><span>PERFECT</span><strong id="perfect">0</strong></div>
+          </div>
+          <canvas id="game" width="1000" height="680" aria-label="Stackrush 3D stacking game"></canvas>
+          <div class="game-overlay" id="overlay">
+            <div class="overlay-card">
+              <h2 id="overlay-title">Stackrush</h2>
+              <p id="overlay-copy">Click or press Space to drop a block.</p>
+              <button id="start">Play</button>
+            </div>
           </div>
         </div>
-      </div>
-      <footer class="game-footer">
-        <span>STACK IT STRAIGHT.</span>
-        <span>CLICK · SPACE · TAP</span>
-      </footer>
-    </section>
+        <div class="game-controls"><span>CLICK / SPACE / TAP TO DROP</span><span>STACK AS HIGH AS YOU CAN</span></div>
+      </section>
+
+      <aside class="game-rail">
+        <h2>More games</h2>
+        <a class="rail-card" href="./">
+          <div class="rail-art"></div>
+          <span>Stackrush</span>
+          <small>Arcade</small>
+        </a>
+      </aside>
+    </div>
   </main>
   <script src="game.js"></script>
 </body>
