@@ -1,6 +1,6 @@
 const GAMES = [
-  { id: "brick-breaker", title: "Brick Breaker", description: "Bounce, break, and clear the board.", path: "games/?game=brick-breaker", tags: ["arcade", "skill", "action", "quick-play"] },
-  { id: "stackrush", title: "Stack Rush", description: "Line up the blocks. Keep the tower going.", path: "games/?game=stackrush", tags: ["arcade", "skill", "timing", "quick-play"] },
+  { id: "brick-breaker", title: "Brick Breaker", description: "Bounce, break, and clear the board.", path: "games/play.html?game=brick-breaker", tags: ["arcade", "skill", "action", "quick-play"] },
+  { id: "stackrush", title: "Stack Rush", description: "Line up the blocks. Keep the tower going.", path: "games/play.html?game=stackrush", tags: ["arcade", "skill", "timing", "quick-play"] },
 ];
 const FEATURED_GAME_ID = null;
 const FAVORITES_KEY = "taravo-favorites";
