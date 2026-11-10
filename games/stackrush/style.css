@@ -23,11 +23,11 @@ canvas{display:block;width:100%;height:auto;aspect-ratio:1000/680;touch-action:m
 .game-overlay.hidden{opacity:0;pointer-events:none}
 .overlay-card{width:min(300px,calc(100% - 32px));padding:26px;background:#fff;border:1px solid #e5e9e6;border-radius:10px;box-shadow:0 12px 35px #18251d12}
 .overlay-card h2{margin:0 0 8px;font-size:27px;letter-spacing:-.05em}.overlay-card p{margin:0 0 18px;color:#7b847e;font-size:13px}
-button{width:100%;padding:12px 15px;border:0;border-radius:7px;background:#62e6b5;color:#10251c;font:700 13px inherit;cursor:pointer}
+button{width:100%;padding:12px 15px;border:0;border-radius:7px;background:#62e6b5;color:#10251c;font:700 13px system-ui;cursor:pointer}
 button:hover{background:#4bd5a3}
 .game-controls{display:flex;justify-content:space-between;padding:12px 2px;color:#a1a8a3;font-size:9px;font-weight:700;letter-spacing:.1em}
 .game-rail h2{margin:0 0 13px;font-size:14px;letter-spacing:-.02em}
-.rail-card{display:block;overflow:hidden;border:1px solid var(--border);border-radius:9px;background:#fff}
+.control-card{padding:13px 12px;margin-bottom:9px;border:1px solid var(--border);border-radius:8px;background:#fff}.control-card span,.control-card strong{display:block}.control-card span{font-size:9px;color:#9aa19c;letter-spacing:.1em}.control-card strong{margin-top:5px;font-size:14px}
 .rail-art{height:100px;background:#f7f8f7;position:relative}
 .rail-art:before{content:"";position:absolute;width:58px;height:24px;left:calc(50% - 29px);top:42px;background:#f04d65;transform:skewY(-25deg);box-shadow:0 -23px #ffbd35,0 -46px #42b9ef}
 .rail-card span,.rail-card small{display:block;margin:10px 11px 0;font-size:12px;font-weight:700}.rail-card small{margin-top:3px;margin-bottom:11px;color:#929a94;font-size:10px;font-weight:500}
