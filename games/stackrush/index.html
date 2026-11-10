@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#d9e1d7">
+  <title>Stackrush — Taravo</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="game-shell">
+    <header class="topbar">
+      <a class="back-link" href="../../games/">← All games</a>
+      <div class="wordmark">TARAVO <span>/ ARCADE</span></div>
+      <div class="best">BEST <strong id="best">0</strong></div>
+    </header>
+
+    <section class="game-layout">
+      <div class="intro">
+        <p class="eyebrow">HARBOR SHIFT NO. 01</p>
+        <h1>Stackrush<span>.</span></h1>
+        <p class="description">One more crate. One more shift. How high can you build?</p>
+      </div>
+
+      <div class="game-frame">
+        <div class="hud">
+          <div><small>CRATES PLACED</small><strong id="score">0</strong></div>
+          <div class="hud-right"><small>PERFECT DROPS</small><strong id="perfect">0</strong></div>
+        </div>
+        <canvas id="game" width="900" height="560" aria-label="Stackrush stacking game"></canvas>
+        <div class="overlay" id="overlay">
+          <div class="overlay-card">
+            <p class="eyebrow" id="overlay-kicker">THE DOCK IS OPEN</p>
+            <h2 id="overlay-title">Build something<br>that lasts.</h2>
+            <p id="overlay-copy">Drop each passing crate onto the stack. Keep the edges lined up.</p>
+            <button id="start">Start stacking <span>→</span></button>
+            <small class="controls-note">CLICK OR PRESS SPACE TO DROP</small>
+          </div>
+        </div>
+      </div>
+      <footer class="game-footer">
+        <span>STACK IT STRAIGHT.</span>
+        <span>CLICK · SPACE · TAP</span>
+      </footer>
+    </section>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>
