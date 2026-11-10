@@ -38,7 +38,7 @@
     ball.x+=ball.vx*dt;ball.y+=ball.vy*dt;trail.push({x:ball.x,y:ball.y});if(trail.length>10)trail.shift();
     if(ball.x<ball.r+10){ball.x=ball.r+10;ball.vx=Math.abs(ball.vx)}
     if(ball.x>W-ball.r-10){ball.x=W-ball.r-10;ball.vx=-Math.abs(ball.vx)}
-    if(ball.y<ball.r+65){ball.y=ball.r+65;ball.vy=Math.abs(ball.vy)}
+    if(ball.y<105+ball.r){ball.y=105+ball.r;ball.vy=Math.abs(ball.vy)}
     if(ball.vy>0&&circleRect(ball,paddle)){
       ball.y=paddle.y-ball.r;
       const hit=(ball.x-(paddle.x+paddle.w/2))/(paddle.w/2);
@@ -68,7 +68,7 @@
       roundRect(paddle.x-1,paddle.y+6,paddle.w+2,paddle.h,9,"#00000020");
       const pg=ctx.createLinearGradient(0,paddle.y,0,paddle.y+paddle.h);pg.addColorStop(0,"#46564b");pg.addColorStop(1,"#17221b");
       roundRect(paddle.x,paddle.y,paddle.w,paddle.h,9,pg);
-      roundRect(paddle.x+12,paddle.y+3,paddle.w-24,3,2,"#62e6b5");
+      roundRect(paddle.x+12,paddle.y+3,paddle.w-24,3,2,"#ffffff");
     }
     if(ball){
       trail.forEach((point,i)=>{const t=(i+1)/trail.length;ctx.beginPath();ctx.arc(point.x,point.y,ball.r*t*.72,0,Math.PI*2);ctx.fillStyle="rgba(98,230,181,"+(t*.16)+")";ctx.fill()});
