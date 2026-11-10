@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#08090b">
   <title>Games — taravo</title>
   <link rel="stylesheet" href="../home/style.css">
-  <link rel="stylesheet" href="brick-breaker/game.css">
+  <script src="../home/app.js" defer></script>
 </head>
-<body data-page="games" class="game-page">
+<body data-page="games">
   <aside class="sidebar">
     <a class="brand" href="../home/" aria-label="taravo home">taravo</a>
     <nav class="navigation" aria-label="Main navigation">
@@ -19,23 +19,16 @@
     <div class="sidebar-bottom"><span class="sidebar-caption">fun games</span></div>
   </aside>
   <main class="main-content">
-    <header class="page-header game-page-header"><div><h1>Games</h1></div></header>
-    <section class="arcade-shell" aria-label="Brick Breaker game">
-      <div class="arcade-hud">
-        <div><span>SCORE</span><strong id="score">0</strong></div>
-        <div><span>LEVEL</span><strong id="level">1</strong></div>
-        <div><span>BEST</span><strong id="best">0</strong></div>
-      </div>
-      <canvas id="brick-breaker" width="1100" height="720" aria-label="Brick Breaker game"></canvas>
-      <div class="arcade-overlay" id="overlay">
-        <div class="arcade-start">
-          <h2 id="overlay-title">Brick Breaker</h2>
-          <p id="overlay-copy">Move to control the paddle.</p>
-          <button id="start-button" type="button">Play</button>
-        </div>
-      </div>
+    <header class="page-header">
+      <div><h1>Games</h1></div>
+      <label class="search-wrap">
+        <span aria-hidden="true">⌕</span>
+        <input class="game-search" type="search" placeholder="Search games..." aria-label="Search games">
+      </label>
+    </header>
+    <section class="content-section">
+      <div id="game-grid" class="game-grid"></div>
     </section>
   </main>
-  <script src="brick-breaker/game.js"></script>
 </body>
 </html>
