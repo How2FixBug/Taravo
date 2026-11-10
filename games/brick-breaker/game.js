@@ -4,7 +4,7 @@
   const overlay=document.getElementById("overlay"),titleEl=document.getElementById("overlay-title"),copyEl=document.getElementById("overlay-copy"),button=document.getElementById("start-button");
   const W=1100,H=720,colors=["#ff5364","#ff9f32","#ffd447","#6bd65c","#25c7a8","#36a9ff","#8165ef","#e65ac1"];
   let score=0,best=Number(localStorage.getItem("taravo-breaker-best")||0),level=1,lives=3,bricks=[],particles=[],ball=null,paddle=null,running=false,paused=false,last=0,keys={};
-  let pointerX=W/2;
+  let pointerX=W/2;\n  let gamePrefs={particles:true,sensitivity:100};\n  try{gamePrefs={...gamePrefs,...JSON.parse(localStorage.getItem("taravo-settings")||"{}")}}catch{}
   bestEl.textContent=best;
   const rand=a=>a[Math.floor(Math.random()*a.length)];
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
@@ -18,13 +18,13 @@
   }
   function resetBall(){ball={x:W/2,y:H-145,r:10,vx:(Math.random()>.5?1:-1)*245,vy:-360};paddle={x:W/2-66,y:H-78,w:132,h:15,speed:780}}
   function start(){score=0;level=1;lives=3;particles=[];scoreEl.textContent=score;levelEl.textContent=level;makeBricks();resetBall();running=true;paused=false;last=0;overlay.classList.add("hidden");requestAnimationFrame(loop)}
-  function burst(x,y,color,n=12){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,s=70+Math.random()*260;particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,size:2+Math.random()*5,life:.35+Math.random()*.6,max:1,color,spin:(Math.random()-.5)*9,rot:Math.random()*6})}}
+  function burst(x,y,color,n=12){if(gamePrefs.particles===false)return;for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,s=70+Math.random()*260;particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,size:2+Math.random()*5,life:.35+Math.random()*.6,max:1,color,spin:(Math.random()-.5)*9,rot:Math.random()*6})}}
   function addScore(n){score+=n;scoreEl.textContent=score;if(score>best){best=score;bestEl.textContent=best;localStorage.setItem("taravo-breaker-best",String(best))}}
   function hitBrick(b){b.alive=false;burst(b.x+b.w/2,b.y+b.h/2,b.color,18);addScore(10*level);ball.vy*=-1;if(bricks.every(v=>!v.alive)){level++;levelEl.textContent=level;makeBricks();ball.vx*=1.07;ball.vy*=1.07;burst(W/2,340,rand(colors),65)}}
   function circleRect(c,r){const x=clamp(c.x,r.x,r.x+r.w),y=clamp(c.y,r.y,r.y+r.h),dx=c.x-x,dy=c.y-y;return dx*dx+dy*dy<c.r*c.r}
   function update(dt){
     const move=(keys.ArrowLeft||keys.KeyA?-1:0)+(keys.ArrowRight||keys.KeyD?1:0);
-    if(move)paddle.x+=move*paddle.speed*dt;else paddle.x+=(pointerX-paddle.w/2-paddle.x)*Math.min(1,dt*13);
+    if(move)paddle.x+=move*paddle.speed*dt;else paddle.x+=(pointerX-paddle.w/2-paddle.x)*Math.min(1,dt*13*(Number(gamePrefs.sensitivity)||100)/100);
     paddle.x=clamp(paddle.x,20,W-paddle.w-20);
     ball.x+=ball.vx*dt;ball.y+=ball.vy*dt;
     if(ball.x<ball.r+10){ball.x=ball.r+10;ball.vx=Math.abs(ball.vx)}
