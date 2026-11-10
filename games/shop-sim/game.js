@@ -24,7 +24,7 @@
     const saved = JSON.parse(localStorage.getItem(SAVE_KEY) || "null");
     if (saved && saved.version === 1) state = {...state,...saved.state,upgrades:{...state.upgrades,...saved.state.upgrades},stocks:{...state.stocks,...saved.state.stocks},prices:{...state.prices,...saved.state.prices},customers:[]};
   } catch {}
-  let lastFrame = performance.now(), animation = 0, feed = [];
+  let lastFrame = performance.now(), animation = 0, feed = [], lastStatsSecond = -1, saveTimer = 0, staffTimer = 14;
   const rand = (a,b) => a + Math.random()*(b-a);
   const money = n => "$" + Math.max(0,n).toFixed(2).replace(/\.00$/,"");
   const unlocked = p => p.unlock <= state.level;
@@ -169,13 +169,15 @@
       state.elapsed+=dt;
       if(state.elapsed>=120){endDay()}
       else{state.nextCustomer-=dt;if(state.nextCustomer<=0){if(state.customers.length<5+state.upgrades.sign*2)spawnCustomer();state.nextCustomer=rand(3.8,6.5)/(1+state.upgrades.sign*.16)}updateCustomers(dt)}
-      if(Math.floor(state.elapsed)%5===0)renderStats();
+      staffTimer-=dt;
+      if(state.upgrades.staff>0&&staffTimer<=0){staffTimer=14;const low=availableProducts().filter(p=>(state.stocks[p.id]||0)<shelfCapacity(p)*.4).sort((a,b)=>(state.stocks[a.id]||0)/shelfCapacity(a)-(state.stocks[b.id]||0)/shelfCapacity(b));low.slice(0,state.upgrades.staff).forEach(p=>{const amount=Math.min(4*state.upgrades.staff,shelfCapacity(p)-(state.stocks[p.id]||0));const cost=amount*p.cost;if(amount>0&&state.cash>=cost){state.cash-=cost;state.stocks[p.id]=(state.stocks[p.id]||0)+amount;log("Staff restocked "+p.name.toLowerCase()+".")}});renderProducts();renderUpgrades()}
+      const second=Math.floor(state.elapsed);if(second!==lastStatsSecond){lastStatsSecond=second;renderStats()}
+      saveTimer+=dt;if(saveTimer>=5){saveTimer=0;save()}
     }
     drawStore();animation=requestAnimationFrame(frame);
   }
   $("restock-all").addEventListener("click",()=>availableProducts().forEach(p=>restock(p.id,12)));
   $("product-list").addEventListener("click",()=>{});
-  $("management-tabs").addEventListener?.("click",()=>{});
   document.querySelectorAll(".management-tab").forEach(tab=>tab.addEventListener("click",()=>{
     document.querySelectorAll(".management-tab").forEach(t=>t.classList.toggle("active",t===tab));
     $("stock-tab").classList.toggle("hidden",tab.dataset.tab!=="stock");$("business-tab").classList.toggle("hidden",tab.dataset.tab!=="business");
