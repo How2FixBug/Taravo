@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" role="img" aria-labelledby="title desc">
+<title id="title">Brick Breaker</title><desc id="desc">A screenshot-style illustration of the Taravo Brick Breaker game with colorful bricks, a bouncing ball and paddle.</desc>
+<rect width="960" height="540" fill="#fff"/>
+<path d="M34 84H926" stroke="#edf0ed" stroke-width="3"/>
+<g font-family="system-ui,-apple-system,Segoe UI,sans-serif">
+<text x="48" y="53" font-size="17" font-weight="800" letter-spacing="4" fill="#7e8782">TARAVO ARCADE</text>
+<text x="912" y="53" font-size="17" font-weight="800" text-anchor="end" letter-spacing="2" fill="#202a25">LEVEL 01</text>
+<g opacity=".18" transform="translate(0 8)">
+<rect x="106" y="137" width="132" height="42" rx="8" fill="#000"/><rect x="250" y="137" width="132" height="42" rx="8" fill="#000"/><rect x="394" y="137" width="132" height="42" rx="8" fill="#000"/><rect x="538" y="137" width="132" height="42" rx="8" fill="#000"/><rect x="682" y="137" width="132" height="42" rx="8" fill="#000"/>
+</g>
+<g>
+<rect x="106" y="137" width="132" height="42" rx="8" fill="#ff5364"/><rect x="250" y="137" width="132" height="42" rx="8" fill="#ff9f32"/><rect x="394" y="137" width="132" height="42" rx="8" fill="#ffd447"/><rect x="538" y="137" width="132" height="42" rx="8" fill="#6bd65c"/><rect x="682" y="137" width="132" height="42" rx="8" fill="#25c7a8"/>
+<rect x="106" y="190" width="132" height="42" rx="8" fill="#36a9ff"/><rect x="250" y="190" width="132" height="42" rx="8" fill="#8165ef"/><rect x="394" y="190" width="132" height="42" rx="8" fill="#e65ac1"/><rect x="538" y="190" width="132" height="42" rx="8" fill="#ff5364"/><rect x="682" y="190" width="132" height="42" rx="8" fill="#ff9f32"/>
+<rect x="106" y="243" width="132" height="42" rx="8" fill="#ffd447"/><rect x="250" y="243" width="132" height="42" rx="8" fill="#6bd65c"/><rect x="394" y="243" width="132" height="42" rx="8" fill="#25c7a8"/><rect x="538" y="243" width="132" height="42" rx="8" fill="#36a9ff"/><rect x="682" y="243" width="132" height="42" rx="8" fill="#8165ef"/>
+</g>
+<g fill="#fff" opacity=".42"><rect x="115" y="144" width="114" height="5" rx="2"/><rect x="259" y="144" width="114" height="5" rx="2"/><rect x="403" y="144" width="114" height="5" rx="2"/><rect x="547" y="144" width="114" height="5" rx="2"/><rect x="691" y="144" width="114" height="5" rx="2"/></g>
+<path d="M460 329L483 292" stroke="#202a25" stroke-width="4" stroke-linecap="round" opacity=".22"/>
+<circle cx="483" cy="292" r="14" fill="#222b26"/><circle cx="478" cy="287" r="4" fill="#fff"/>
+<rect x="373" y="377" width="214" height="24" rx="12" fill="#000" opacity=".1"/>
+<rect x="373" y="369" width="214" height="22" rx="11" fill="#202a25"/><rect x="395" y="374" width="170" height="4" rx="2" fill="#62e6b5"/>
+<text x="480" y="476" font-size="53" font-weight="900" text-anchor="middle" letter-spacing="-2.5" fill="#111318">BRICK BREAKER</text>
+<text x="480" y="507" font-size="16" font-weight="700" text-anchor="middle" letter-spacing="3" fill="#78827c">BOUNCE · BREAK · REPEAT</text>
+</g></svg>
