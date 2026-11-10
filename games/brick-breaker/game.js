@@ -16,7 +16,7 @@
       bricks.push({x:start+col*(bw+gap),y:135+row*(bh+gap),w:bw,h:bh,color,hp:level>3&&row<2?2:1,alive:true});
     }
   }
-  function resetBall(){ball={x:W/2,y:H-145,r:10,vx:(Math.random()>.5?1:-1)*245,vy:-360};paddle={x:W/2-66,y:H-78,w:132,h:15,speed:780}}
+  function resetBall(){trail=[];ball={x:W/2,y:H-145,r:10,vx:(Math.random()>.5?1:-1)*245,vy:-360};paddle={x:W/2-66,y:H-78,w:132,h:15,speed:780}}
   function start(){score=0;level=1;lives=3;particles=[];scoreEl.textContent=score;levelEl.textContent=level;makeBricks();resetBall();running=true;paused=false;last=0;overlay.classList.add("hidden");requestAnimationFrame(loop)}
   function burst(x,y,color,n=12){if(gamePrefs.particles===false)return;for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,s=70+Math.random()*260;particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,size:2+Math.random()*5,life:.35+Math.random()*.6,max:1,color,spin:(Math.random()-.5)*9,rot:Math.random()*6})}}
   function addScore(n){score+=n;scoreEl.textContent=score;if(score>best){best=score;bestEl.textContent=best;localStorage.setItem("taravo-breaker-best",String(best))}}
@@ -26,7 +26,7 @@
     const move=(keys.ArrowLeft||keys.KeyA?-1:0)+(keys.ArrowRight||keys.KeyD?1:0);
     if(move)paddle.x+=move*paddle.speed*dt;else paddle.x+=(pointerX-paddle.w/2-paddle.x)*Math.min(1,dt*13*(Number(gamePrefs.sensitivity)||100)/100);
     paddle.x=clamp(paddle.x,20,W-paddle.w-20);
-    ball.x+=ball.vx*dt;ball.y+=ball.vy*dt;
+    ball.x+=ball.vx*dt;ball.y+=ball.vy*dt;trail.push({x:ball.x,y:ball.y});if(trail.length>10)trail.shift();
     if(ball.x<ball.r+10){ball.x=ball.r+10;ball.vx=Math.abs(ball.vx)}
     if(ball.x>W-ball.r-10){ball.x=W-ball.r-10;ball.vx=-Math.abs(ball.vx)}
     if(ball.y<ball.r+65){ball.y=ball.r+65;ball.vy=Math.abs(ball.vy)}
@@ -42,14 +42,30 @@
     if(ball.y>H+ball.r){lives--;if(lives<=0){endGame();return}resetBall()}
     for(let i=particles.length-1;i>=0;i--){const p=particles[i];p.life-=dt;p.vy+=440*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.rot+=p.spin*dt;if(p.life<=0)particles.splice(i,1)}
   }
-  function drawBrick(b){roundRect(b.x+2,b.y+4,b.w,b.h,5,"#00000012");roundRect(b.x,b.y,b.w,b.h,5,b.color);ctx.fillStyle="#ffffff55";ctx.fillRect(b.x+6,b.y+4,b.w-12,3);if(b.hp>1){ctx.fillStyle="#ffffff";ctx.beginPath();ctx.arc(b.x+b.w/2,b.y+b.h/2,4,0,Math.PI*2);ctx.fill()}}
+  function drawBrick(b){
+    roundRect(b.x+2,b.y+5,b.w,b.h,6,"#14201918");
+    const g=ctx.createLinearGradient(b.x,b.y,b.x,b.y+b.h);g.addColorStop(0, "#ffffff");g.addColorStop(.16,b.color);g.addColorStop(1,b.color);
+    roundRect(b.x,b.y,b.w,b.h,6,g);
+    ctx.save();ctx.globalAlpha=.2;roundRect(b.x+5,b.y+4,b.w-10,3,2,"#ffffff");ctx.restore();
+    ctx.save();ctx.globalAlpha=.15;roundRect(b.x+5,b.y+b.h-5,b.w-10,2,1,"#152018");ctx.restore();
+    if(b.hp>1){ctx.beginPath();ctx.arc(b.x+b.w/2,b.y+b.h/2,5,0,Math.PI*2);ctx.fillStyle="#fff";ctx.fill();ctx.strokeStyle="#ffffff99";ctx.stroke()}
+  }
   function draw(){
     ctx.fillStyle="#fff";ctx.fillRect(0,0,W,H);
     // Quiet court markings keep the playfield clean.
     ctx.strokeStyle="#edf0ed";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(26,105);ctx.lineTo(W-26,105);ctx.stroke();
     bricks.forEach(b=>{if(b.alive)drawBrick(b)});
-    if(paddle){roundRect(paddle.x,paddle.y+4,paddle.w,paddle.h,8,"#00000018");roundRect(paddle.x,paddle.y,paddle.w,paddle.h,8,"#202a25");roundRect(paddle.x+12,paddle.y+3,paddle.w-24,3,2,"#62e6b5")}
-    if(ball){ctx.shadowColor="#00000022";ctx.shadowBlur=10;ctx.beginPath();ctx.arc(ball.x,ball.y,ball.r,0,Math.PI*2);ctx.fillStyle="#222b26";ctx.fill();ctx.shadowBlur=0;ctx.beginPath();ctx.arc(ball.x-3,ball.y-3,3,0,Math.PI*2);ctx.fillStyle="#fff";ctx.fill()}
+    if(paddle){
+      roundRect(paddle.x-1,paddle.y+6,paddle.w+2,paddle.h,9,"#00000020");
+      const pg=ctx.createLinearGradient(0,paddle.y,0,paddle.y+paddle.h);pg.addColorStop(0,"#46564b");pg.addColorStop(1,"#17221b");
+      roundRect(paddle.x,paddle.y,paddle.w,paddle.h,9,pg);
+      roundRect(paddle.x+12,paddle.y+3,paddle.w-24,3,2,"#62e6b5");
+    }
+    if(ball){
+      trail.forEach((point,i)=>{const t=(i+1)/trail.length;ctx.beginPath();ctx.arc(point.x,point.y,ball.r*t*.72,0,Math.PI*2);ctx.fillStyle="rgba(98,230,181,"+(t*.16)+")";ctx.fill()});
+      ctx.save();ctx.shadowColor="#62e6b5aa";ctx.shadowBlur=18;ctx.beginPath();ctx.arc(ball.x,ball.y,ball.r,0,Math.PI*2);ctx.fillStyle="#26332b";ctx.fill();ctx.restore();
+      ctx.beginPath();ctx.arc(ball.x-3,ball.y-3,3,0,Math.PI*2);ctx.fillStyle="#fff";ctx.fill();
+    }
     particles.forEach(p=>{ctx.save();ctx.globalAlpha=clamp(p.life/p.max,0,1);ctx.translate(p.x,p.y);ctx.rotate(p.rot);ctx.fillStyle=p.color;ctx.fillRect(-p.size/2,-p.size/2,p.size,p.size);ctx.restore()});
     // lives are small circles in the lower corner
     for(let i=0;i<lives;i++){ctx.beginPath();ctx.arc(W-36-i*23,H-34,6,0,Math.PI*2);ctx.fillStyle="#62e6b5";ctx.fill()}
