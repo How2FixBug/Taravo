@@ -4,7 +4,7 @@
 .stack-shell{position:relative;width:100%;height:min(calc(100vh - 155px),790px);min-height:480px;overflow:hidden;background:#fff;border:1px solid #dfe4e1;border-radius:14px;box-shadow:0 14px 40px #0000000c}
 #stackrush{display:block;width:100%;height:100%;touch-action:manipulation;cursor:pointer}
 .stack-hud{position:absolute;z-index:2;top:20px;left:26px;right:26px;display:grid;grid-template-columns:1fr 1fr 1fr;align-items:start;pointer-events:none;color:#18211c}
-.stack-hud>div{display:grid;gap:4px}.stack-hud-center{text-align:center}.stack-hud-right{display:flex;justify-content:flex-end;align-items:center;gap:12px}.stack-hud-right>div{text-align:right}
+.stack-hud>div{display:grid;gap:4px}.stack-hud-center{text-align:center}.stack-hud-right{display:flex;flex-direction:column;justify-content:flex-start;align-items:flex-end;gap:9px}.stack-hud-right>div{text-align:right}
 .stack-hud span{font-size:9px;font-weight:850;letter-spacing:.16em;color:#87928b}.stack-hud strong{font-size:25px;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.04em}
 .stack-menu-button{width:34px;height:34px;display:grid;place-items:center;padding:0;border:1px solid #dfe5df;border-radius:8px;background:#fff;color:#344238;font:700 18px system-ui;cursor:pointer;pointer-events:auto;box-shadow:0 2px 7px #14201912;transition:background .15s,border-color .15s,transform .12s}.stack-menu-button:hover{background:#eff8f2;border-color:#62e6b5}.stack-menu-button:active{transform:translateY(1px)}
 .stack-overlay{position:absolute;inset:0;z-index:3;display:grid;place-items:center;background:#ffffffa8;backdrop-filter:blur(4px);transition:opacity .18s}
