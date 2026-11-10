@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#08090b">
+  <title>Brick Breaker — taravo</title>
+  <link rel="stylesheet" href="../../home/style.css">
+  <link rel="stylesheet" href="game.css">
+</head>
+<body data-page="game" class="game-page">
+  <aside class="sidebar">
+    <a class="brand" href="../../home/" aria-label="taravo home">taravo</a>
+    <nav class="navigation" aria-label="Main navigation">
+      <a class="nav-link" href="../../home/"><span class="nav-icon">⌂</span>Home</a>
+      <a class="nav-link active" href="../"><span class="nav-icon">▦</span>Games</a>
+      <a class="nav-link" href="../../favorites/"><span class="nav-icon">☆</span>Favorites</a>
+    </nav>
+    <div class="sidebar-bottom"><span class="sidebar-caption">fun games</span></div>
+  </aside>
+  <main class="main-content">
+    <header class="page-header game-page-header"><div><h1>Brick Breaker</h1></div></header>
+    <section class="arcade-shell" aria-label="Brick Breaker game">
+      <div class="arcade-hud">
+        <div><span>SCORE</span><strong id="score">0</strong></div>
+        <div><span>LEVEL</span><strong id="level">1</strong></div>
+        <div><span>BEST</span><strong id="best">0</strong></div>
+      </div>
+      <canvas id="brick-breaker" width="1100" height="720" aria-label="Brick Breaker game"></canvas>
+      <div class="arcade-overlay" id="overlay">
+        <div class="arcade-start">
+          <h2 id="overlay-title">Brick Breaker</h2>
+          <p id="overlay-copy">Move to control the paddle.</p>
+          <button id="start-button" type="button">Play</button>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>
