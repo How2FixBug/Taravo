@@ -1,25 +1,39 @@
-const GAMES = [
-  { id: "brick-breaker", title: "Brick Breaker", description: "Bounce, break, and clear the board.", path: "games/play.html?game=brick-breaker", tags: ["arcade", "skill", "action", "quick-play"] },
-  { id: "stackrush", title: "Stack Rush", description: "Line up the blocks. Keep the tower going.", path: "games/play.html?game=stackrush", tags: ["arcade", "skill", "timing", "quick-play"] },
-];
 const FEATURED_GAME_ID = null;
 const FAVORITES_KEY = "taravo-favorites";
 const appScript = document.querySelector('script[src$="app.js"]');
 const TARAVO_ROOT = new URL("../", appScript.src);
+let GAMES = [];
 
+async function loadGames() {
+  const response = await fetch(new URL("games/library/manifest.json", TARAVO_ROOT));
+  if (!response.ok) throw new Error("Could not load game manifest");
+  const manifest = await response.json();
+  const entries = await Promise.all((manifest.games || []).map(async id => {
+    if (!/^[a-z0-9-]+$/.test(id)) return null;
+    const result = await fetch(new URL(`games/library/${id}/game.json`, TARAVO_ROOT));
+    if (!result.ok) return null;
+    const game = await result.json();
+    if (game.id !== id || !game.name || !game.description || !Array.isArray(game.tags)) return null;
+    return { ...game, title: game.name, path: `games/play.html?game=${encodeURIComponent(id)}`,
+      thumbnailUrl: new URL(`games/library/${id}/${game.thumbnail || "thumbnail.svg"}`, TARAVO_ROOT).href };
+  }));
+  GAMES = entries.filter(Boolean);
+}
 function getFavorites() {
-  try { return JSON.parse(localStorage.getItem(FAVORITES_KEY) || "[]"); }
-  catch { return []; }
+  try { return JSON.parse(localStorage.getItem(FAVORITES_KEY) || "[]"); } catch { return []; }
 }
 function saveFavorites(ids) { localStorage.setItem(FAVORITES_KEY, JSON.stringify(ids)); }
-
 function createGameCard(game, favorites, featured = false) {
   const card = document.createElement("article");
   card.className = featured ? "game-card featured-game-card" : "game-card";
   card.dataset.game = game.id;
   const art = document.createElement("div");
   art.className = "game-art";
-  art.setAttribute("aria-hidden", "true");
+  const thumbnail = document.createElement("img");
+  thumbnail.src = game.thumbnailUrl;
+  thumbnail.alt = game.name + " thumbnail";
+  thumbnail.loading = "lazy";
+  art.append(thumbnail);
   const details = document.createElement("div");
   details.className = "game-details";
   if (featured) {
@@ -29,7 +43,7 @@ function createGameCard(game, favorites, featured = false) {
     details.append(eyebrow);
   }
   const title = document.createElement("h3");
-  title.textContent = game.title;
+  title.textContent = game.name;
   const description = document.createElement("p");
   description.textContent = game.description;
   const tags = document.createElement("div");
@@ -55,8 +69,7 @@ function createGameCard(game, favorites, featured = false) {
   favorite.addEventListener("click", () => {
     const next = getFavorites();
     const index = next.indexOf(game.id);
-    if (index === -1) next.push(game.id);
-    else next.splice(index, 1);
+    if (index === -1) next.push(game.id); else next.splice(index, 1);
     saveFavorites(next);
     renderPage(document.querySelector(".game-search")?.value || "");
   });
@@ -65,52 +78,38 @@ function createGameCard(game, favorites, featured = false) {
   card.append(art, details);
   return card;
 }
-
 function getRecommendedGames(favorites) {
   const candidates = GAMES.filter(game => game.id !== FEATURED_GAME_ID);
   const favoriteTags = new Set(GAMES.filter(game => favorites.includes(game.id)).flatMap(game => game.tags));
   if (!favoriteTags.size) return candidates;
-  return candidates
-    .map(game => ({ game, score: game.tags.reduce((total, tag) => total + (favoriteTags.has(tag) ? 1 : 0), 0) }))
-    .sort((a, b) => b.score - a.score || GAMES.indexOf(a.game) - GAMES.indexOf(b.game))
-    .map(item => item.game);
+  return candidates.map(game => ({ game, score: game.tags.reduce((n, tag) => n + (favoriteTags.has(tag) ? 1 : 0), 0) }))
+    .sort((a, b) => b.score - a.score || GAMES.indexOf(a.game) - GAMES.indexOf(b.game)).map(item => item.game);
 }
-
 function renderHome(search, favorites) {
-  const recommendedGrid = document.getElementById("recommended-grid");
-  if (!recommendedGrid) return;
+  const grid = document.getElementById("recommended-grid");
+  if (!grid) return;
   const query = search.trim().toLowerCase();
-  recommendedGrid.replaceChildren();
-  const recommended = getRecommendedGames(favorites).filter(game =>
-    !query || [game.title, game.description, ...game.tags].join(" ").toLowerCase().includes(query)
-  );
-  if (recommended.length) {
-    recommended.forEach(game => recommendedGrid.append(createGameCard(game, favorites)));
-  } else {
+  grid.replaceChildren();
+  const games = getRecommendedGames(favorites).filter(game => !query || [game.name, game.description, ...game.tags].join(" ").toLowerCase().includes(query));
+  if (games.length) games.forEach(game => grid.append(createGameCard(game, favorites)));
+  else {
     const empty = document.createElement("p");
     empty.className = "subtle-empty";
     empty.textContent = "No games match that search.";
-    recommendedGrid.append(empty);
+    grid.append(empty);
   }
 }
-
 function renderGames(search = "") {
   const page = document.body.dataset.page;
   const favorites = getFavorites();
-  if (page === "home") {
-    renderHome(search, favorites);
-    return;
-  }
+  if (page === "home") { renderHome(search, favorites); return; }
   let games = page === "favorites" ? GAMES.filter(game => favorites.includes(game.id)) : GAMES;
   const query = search.trim().toLowerCase();
-  if (query) games = games.filter(game => [game.title, game.description, ...game.tags].join(" ").toLowerCase().includes(query));
+  if (query) games = games.filter(game => [game.name, game.description, ...game.tags].join(" ").toLowerCase().includes(query));
   const grid = document.getElementById("game-grid");
   if (!grid) return;
   grid.replaceChildren();
-  if (games.length) {
-    games.forEach(game => grid.append(createGameCard(game, favorites)));
-    return;
-  }
+  if (games.length) { games.forEach(game => grid.append(createGameCard(game, favorites))); return; }
   const empty = document.createElement("div");
   empty.className = "empty-state";
   const heading = document.createElement("h2");
@@ -121,8 +120,16 @@ function renderGames(search = "") {
   grid.append(empty);
 }
 function renderPage(search = "") { renderGames(search); }
-
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   document.querySelectorAll(".game-search").forEach(input => input.addEventListener("input", () => renderPage(input.value)));
-  renderPage();
+  try { await loadGames(); renderPage(); }
+  catch {
+    const grid = document.getElementById("game-grid") || document.getElementById("recommended-grid");
+    if (grid) {
+      const message = document.createElement("p");
+      message.className = "subtle-empty";
+      message.textContent = "The game library could not be loaded.";
+      grid.replaceChildren(message);
+    }
+  }
 });
