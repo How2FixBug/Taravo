@@ -178,3 +178,5 @@ h1 { margin: 0; font-size: clamp(2rem, 4vw, 2.8rem); letter-spacing: -.055em; }
 .game-card[data-game="stackrush"] .game-art{position:relative;overflow:hidden;background:#fff}
 .game-card[data-game="stackrush"] .game-art:before{content:"";position:absolute;left:50%;top:57%;width:66px;height:25px;transform:translate(-50%,-50%) skewY(-20deg);background:#ff4d6d;box-shadow:0 -25px #ffbd35,0 -50px #00a6fb,0 -75px #70e000}
 .game-card[data-game="stackrush"] .game-art:after{content:"";position:absolute;left:calc(50% + 33px);top:57%;width:25px;height:25px;transform:translateY(-50%) skewY(30deg);background:#b92f52;box-shadow:0 -25px #c58e27,0 -50px #006e9f,0 -75px #438c00}
+
+.game-card[data-game="brick-breaker"] .game-art{background:#fff url("../games/brick-breaker/thumbnail.svg") center/cover no-repeat}
