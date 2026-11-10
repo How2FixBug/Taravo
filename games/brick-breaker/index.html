@@ -25,14 +25,13 @@
       <div class="arcade-hud">
         <div><span>SCORE</span><strong id="score">0</strong></div>
         <div><span>LEVEL</span><strong id="level">1</strong></div>
-        <div><span>BEST</span><strong id="best">0</strong></div>
+        <div class="hud-right"><div><span>BEST</span><strong id="best">0</strong></div><button class="icon-button" id="menu-button" type="button" aria-label="Open menu" title="Menu">☰</button><button class="icon-button" id="fullscreen-button" type="button" aria-label="Toggle fullscreen" title="Fullscreen">⛶</button></div>
       </div>
       <canvas id="brick-breaker" width="1100" height="720" aria-label="Brick Breaker game"></canvas>
       <div class="arcade-overlay" id="overlay">
         <div class="arcade-start">
           <h2 id="overlay-title">Brick Breaker</h2>
-          <p id="overlay-copy">Move to control the paddle.</p>
-          <button id="start-button" type="button">Play</button>
+          <div class="menu-actions"><button id="start-button" type="button">Play</button><button id="secondary-button" class="secondary-button" type="button">Fullscreen</button></div>
         </div>
       </div>
     </section>
