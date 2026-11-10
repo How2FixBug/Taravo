@@ -175,25 +175,6 @@ h1 { margin: 0; font-size: clamp(2rem, 4vw, 2.8rem); letter-spacing: -.055em; }
 }
 
 
-.game-card[data-game="stackrush"] .game-art {
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(to bottom, #cbd9d0 0 56%, #91aaa1 56% 76%, #9b8b70 76% 100%);
-}
-.game-card[data-game="stackrush"] .game-art::before {
-  content: "";
-  position: absolute;
-  left: 18%; top: 17%; width: 48%; height: 43%;
-  border-left: 4px solid #71877c;
-  border-top: 4px solid #71877c;
-  background: linear-gradient(90deg, transparent 0 86%, #71877c 86% 90%, transparent 90%);
-  transform: skewY(-8deg);
-}
-.game-card[data-game="stackrush"] .game-art::after {
-  content: "";
-  position: absolute;
-  left: 40%; bottom: 24%; width: 34%; height: 31%;
-  background: repeating-linear-gradient(90deg, #bd7951 0 9px, #a96948 9px 11px);
-  border-top: 4px solid #e0ae80;
-  box-shadow: 0 -31px 0 -2px #d29a63, 0 -34px 0 -2px #e6bc8f;
-}
+.game-card[data-game="stackrush"] .game-art{position:relative;overflow:hidden;background:#fff}
+.game-card[data-game="stackrush"] .game-art:before{content:"";position:absolute;left:50%;top:57%;width:66px;height:25px;transform:translate(-50%,-50%) skewY(-20deg);background:#ff4d6d;box-shadow:0 -25px #ffbd35,0 -50px #00a6fb,0 -75px #70e000}
+.game-card[data-game="stackrush"] .game-art:after{content:"";position:absolute;left:calc(50% + 33px);top:57%;width:25px;height:25px;transform:translateY(-50%) skewY(30deg);background:#b92f52;box-shadow:0 -25px #c58e27,0 -50px #006e9f,0 -75px #438c00}
