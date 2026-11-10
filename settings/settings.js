@@ -1,12 +1,1 @@
-(() => {
-  const KEY="taravo-settings";
-  const defaults={particles:true,sensitivity:100};
-  let prefs={...defaults};
-  try{prefs={...defaults,...JSON.parse(localStorage.getItem(KEY)||"{}")}}catch{}
-  const particles=document.getElementById("particles"),sensitivity=document.getElementById("sensitivity"),value=document.getElementById("sensitivity-value"),status=document.getElementById("settings-status");
-  function save(){localStorage.setItem(KEY,JSON.stringify(prefs));status.textContent="Saved on this device."}
-  particles.checked=prefs.particles!==false;sensitivity.value=prefs.sensitivity;value.textContent=prefs.sensitivity+"%";
-  particles.addEventListener("change",()=>{prefs.particles=particles.checked;save()});
-  sensitivity.addEventListener("input",()=>{prefs.sensitivity=Number(sensitivity.value);value.textContent=prefs.sensitivity+"%";save()});
-  document.getElementById("reset-best").addEventListener("click",()=>{localStorage.removeItem("taravo-breaker-best");status.textContent="Brick Breaker best score reset."});
-})();
+(() => {const api=window.TaravoGlobalSettings,prefs=api.get(),theme=document.getElementById("theme"),accent=document.getElementById("accent"),motion=document.getElementById("reduced-motion"),status=document.getElementById("settings-status");theme.value=prefs.theme;accent.value=prefs.accent;motion.checked=prefs.reducedMotion;function save(next){api.save(next);status.textContent="Saved on this device."}theme.addEventListener("change",()=>save({theme:theme.value}));accent.addEventListener("change",()=>save({accent:accent.value}));motion.addEventListener("change",()=>save({reducedMotion:motion.checked}));})();
