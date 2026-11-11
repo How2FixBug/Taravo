@@ -14,12 +14,12 @@
   }
   if (!id || !/^[a-z0-9-]+$/.test(id)) { showNotFound(); return; }
   try {
-    const response = await fetch(\`library/\${id}/game.json\`);
+    const response = await fetch(`library/${id}/game.json`);
     if (!response.ok) throw new Error("Game not found");
     const game = await response.json();
     if (game.id !== id || !game.name) throw new Error("Invalid game metadata");
     title.textContent = game.name; document.title = game.name + " — taravo";
-    frame.src = \`library/\${id}/\`; frame.title = game.name;
+    frame.src = `library/${id}/`; frame.title = game.name;
     fullscreen.addEventListener("click", async () => {
       try { if (!document.fullscreenElement) await shell.requestFullscreen(); else await document.exitFullscreen(); } catch {}
     });

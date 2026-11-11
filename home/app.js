@@ -12,12 +12,12 @@ async function loadGames() {
   const manifest = await response.json();
   const entries = await Promise.all((manifest.games || []).map(async id => {
     if (!/^[a-z0-9-]+$/.test(id)) return null;
-    const result = await fetch(new URL(\`games/library/\${id}/game.json\`, TARAVO_ROOT));
+    const result = await fetch(new URL(`games/library/${id}/game.json`, TARAVO_ROOT));
     if (!result.ok) return null;
     const game = await result.json();
     if (game.id !== id || !game.name || !game.description || !Array.isArray(game.tags) || !game.thumbnail) return null;
-    return { ...game, category: game.category || "Other", path: \`games/play.html?game=\${encodeURIComponent(id)}\`,
-      thumbnailUrl: new URL(\`games/library/\${id}/\${game.thumbnail}?v=library-2\`, TARAVO_ROOT).href };
+    return { ...game, category: game.category || "Other", path: `games/play.html?game=${encodeURIComponent(id)}`,
+      thumbnailUrl: new URL(`games/library/${id}/${game.thumbnail}?v=library-2`, TARAVO_ROOT).href };
   }));
   GAMES = entries.filter(Boolean).sort((a, b) => a.name.localeCompare(b.name));
 }
@@ -42,7 +42,7 @@ function makeFavoriteButton(game, favorites) {
 }
 function createGameCard(game, favorites) {
   const card = document.createElement("article"); card.className = "game-card"; card.dataset.game = game.id;
-  const artLink = document.createElement("a"); artLink.className = "game-art"; artLink.href = gameUrl(game); artLink.setAttribute("aria-label", \`Play \${game.name}\`);
+  const artLink = document.createElement("a"); artLink.className = "game-art"; artLink.href = gameUrl(game); artLink.setAttribute("aria-label", `Play ${game.name}`);
   const image = document.createElement("img"); image.src = game.thumbnailUrl; image.alt = ""; image.loading = "lazy"; image.decoding = "async"; artLink.append(image);
   const details = document.createElement("div"); details.className = "game-details";
   const top = document.createElement("div"); top.className = "game-card-top";
@@ -120,7 +120,7 @@ function renderGames(search = "") {
   if (sortMode === "category") games.sort((a,b) => a.category.localeCompare(b.category) || a.name.localeCompare(b.name));
   else games.sort((a,b) => a.name.localeCompare(b.name));
   renderFilters(GAMES);
-  const count = document.getElementById("library-count"); if (count) count.textContent = \`\${games.length} \${games.length === 1 ? "game" : "games"}\`;
+  const count = document.getElementById("library-count"); if (count) count.textContent = `${games.length} ${games.length === 1 ? "game" : "games"}`;
   const host = document.getElementById("game-categories"); if (!host) return; host.replaceChildren();
   const visible = selectedCategory === "All" ? games : games.filter(game => game.category === selectedCategory);
   categoriesFor(visible).forEach(category => host.append(createSection(category, visible.filter(game => game.category === category), favorites)));
