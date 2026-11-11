@@ -148,7 +148,7 @@
     const base = blocks[blocks.length - 1];
     const axis = blocks.length % 2 ? "x" : "z";
     const range = Math.max(3.4, (axis === "x" ? base.width : base.depth) / 2 + 3.1);
-    active = { axis, offset: -range, direction: 1, range, speed: 2.7 + Math.min(score * .035, 3.8), color: randomColor() };
+    active = { axis, offset: -range, direction: 1, range, speed: 4.1 + Math.min(score * .055, 5.2), color: randomColor() };
   }
 
   function addBurst(x, z, y, color, count = 18) {
