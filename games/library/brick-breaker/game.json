@@ -8,5 +8,6 @@
     "action",
     "quick-play"
   ],
-  "thumbnail": "thumbnail.png"
+  "thumbnail": "thumbnail.png",
+  "category": "Arcade"
 }
