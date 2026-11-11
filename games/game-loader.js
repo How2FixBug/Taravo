@@ -19,7 +19,8 @@
     const game = await response.json();
     if (game.id !== id || !game.name) throw new Error("Invalid game metadata");
     title.textContent = game.name; document.title = game.name + " — taravo";
-    frame.src = `library/${id}/`; frame.title = game.name;
+    frame.title = game.name;
+    frame.src = `library/${id}/index.html`;
     fullscreen.addEventListener("click", async () => {
       try { if (!document.fullscreenElement) await shell.requestFullscreen(); else await document.exitFullscreen(); } catch {}
     });
