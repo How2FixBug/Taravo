@@ -1,5 +1,6 @@
 const FEATURED_GAME_ID = "brick-breaker";
 const FAVORITES_KEY = "taravo-favorites";
+const CATEGORIES = ["Arcade", "Puzzle", "Platformer", "Action", "Adventure", "Strategy", "Simulation", "Idle & Clicker", "Racing", "Sports", "Classic", "Casual", "Other"];
 const appScript = document.querySelector('script[src$="app.js"]');
 const TARAVO_ROOT = new URL("../", appScript.src);
 let GAMES = [];
@@ -58,13 +59,12 @@ function createFeature(game, favorites) {
   const art = document.createElement("a"); art.className = "feature-art"; art.href = gameUrl(game);
   const image = document.createElement("img"); image.src = game.thumbnailUrl; image.alt = ""; image.loading = "eager"; image.decoding = "async"; art.append(image);
   const details = document.createElement("div"); details.className = "feature-details";
-  const kicker = document.createElement("p"); kicker.className = "section-kicker"; kicker.textContent = "FEATURED GAME";
   const category = document.createElement("span"); category.className = "feature-category"; category.textContent = game.category;
   const title = document.createElement("h2"); title.textContent = game.name;
   const description = document.createElement("p"); description.className = "feature-description"; description.textContent = game.description;
   const actions = document.createElement("div"); actions.className = "feature-actions";
   const play = document.createElement("a"); play.className = "primary-link"; play.href = gameUrl(game); play.textContent = "Play now";
-  actions.append(play, makeFavoriteButton(game, favorites)); details.append(kicker, category, title, description, actions); feature.append(art, details); return feature;
+  actions.append(play, makeFavoriteButton(game, favorites)); details.append(category, title, description, actions); feature.append(art, details); return feature;
 }
 function categoriesFor(games) { return [...new Set(games.map(game => game.category))].sort((a, b) => a.localeCompare(b)); }
 function createSection(category, games, favorites, compact = false) {
@@ -95,7 +95,7 @@ function renderHome() {
 function renderFilters(games) {
   const host = document.getElementById("category-filters"); if (!host) return;
   host.replaceChildren();
-  ["All", ...categoriesFor(games)].forEach(category => {
+  ["All", ...CATEGORIES].forEach(category => {
     const button = document.createElement("button"); button.type = "button";
     button.className = "filter-chip" + (selectedCategory === category ? " active" : "");
     button.textContent = category; button.setAttribute("aria-pressed", String(selectedCategory === category));
