@@ -18,7 +18,7 @@ async function loadGames() {
     const game = await result.json();
     if (game.id !== id || !game.name || !game.description || !Array.isArray(game.tags) || !game.thumbnail) return null;
     return { ...game, category: game.category || "Other", path: `games/play.html?game=${encodeURIComponent(id)}`,
-      thumbnailUrl: new URL(`games/library/${id}/${game.thumbnail}?v=library-6`, TARAVO_ROOT).href };
+      thumbnailUrl: new URL(`games/library/${id}/${game.thumbnail}?v=library-7`, TARAVO_ROOT).href };
   }));
   GAMES = entries.filter(Boolean).sort((a, b) => a.name.localeCompare(b.name));
 }
